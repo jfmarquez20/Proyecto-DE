@@ -1,0 +1,4 @@
+#Wed Aug 26 17:06:25 COT 2020
+base.0=D\:\\Proyectos_DE\\Proyecto1\\SendSms\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
