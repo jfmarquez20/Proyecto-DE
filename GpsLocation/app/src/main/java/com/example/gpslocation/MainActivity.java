@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -20,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,13 +48,14 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     //Instanciacion
     EditText etPort, etIp;
     Button btnEnviar;
     TextView tvLocation;
     RadioButton rbtnTcp, rbtnUdp;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +73,10 @@ public class MainActivity extends AppCompatActivity{
         rbtnUdp = findViewById(R.id.radioButton5);
 
         //Permisos para enviar SMS y utilizar GPS
-        while(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        while (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
-                PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this,1000,getIntent(),PendingIntent.FLAG_CANCEL_CURRENT);
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+                PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 1000, getIntent(), PendingIntent.FLAG_CANCEL_CURRENT);
                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, pendingIntent);
                 System.exit(0);
@@ -89,15 +92,13 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
 
-                String message = tvLocation.getText().toString();
-                if(rbtnTcp.isChecked()){
-                    DoBackgroundTask b1 = new DoBackgroundTask();
-                    b1.execute(message);
+
+                if (rbtnTcp.isChecked()) {
+                    send.run();
                 } else {
-                    DoBackgroundTask2 b1 = new DoBackgroundTask2();
-                    b1.execute(message);
+                   mHandler.removeCallbacks(send);
                 }
-                Toast.makeText(getApplicationContext(),"Mensaje enviado con éxito!",Toast.LENGTH_LONG).show();
+
             }
         });
 
@@ -109,27 +110,36 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onLocationChanged(Location location) {
             LocalDateTime locaDate = LocalDateTime.now();
-            int hours  = locaDate.getHour();
+            int hours = locaDate.getHour();
             int minutes = locaDate.getMinute();
             int month = locaDate.getMonthValue();
             int year = locaDate.getYear();
             int day = locaDate.getDayOfMonth();
             int sec = locaDate.getSecond();
-            if(minutes <= 9 && sec <= 9){
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":0" + minutes + ":0" + sec );
-            } else if (minutes <= 9){
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":0" + minutes + ":" + sec );
-                } else if (sec <= 9) {
-                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":0" + sec );
-                    } else {
-                        tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + sec );
+            if (minutes <= 9 && sec <= 9) {
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":0" + minutes + ":0" + sec);
+            } else if (minutes <= 9) {
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":0" + minutes + ":" + sec);
+            } else if (sec <= 9) {
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":0" + sec);
+            } else {
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + sec);
             }
         }
 
     }
+    private Runnable send = new Runnable(){
+        @Override
+        public void run() {
+            String message = tvLocation.getText().toString();
+            DoBackgroundTask2 b1 = new DoBackgroundTask2();
+            b1.execute(message);
+            Toast.makeText(getApplicationContext(), "Mensaje enviado con éxito!", Toast.LENGTH_LONG).show();
+            mHandler.postDelayed(this, 5000);
+        }
+    };
 
-
-    class DoBackgroundTask extends AsyncTask<String, Void, Void>{
+    class DoBackgroundTask extends AsyncTask<String, Void, Void> {
         Socket s;
         PrintWriter writer;
 
@@ -140,7 +150,7 @@ public class MainActivity extends AppCompatActivity{
             try {
                 int port = Integer.parseInt(etPort.getText().toString());
                 String ip = etIp.getText().toString();
-                s = new Socket(ip,port);
+                s = new Socket(ip, port);
                 writer = new PrintWriter(s.getOutputStream());
                 writer.write(message);
                 writer.flush();
@@ -157,7 +167,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    class DoBackgroundTask2 extends AsyncTask<String, Void, Void>{
+    class DoBackgroundTask2 extends AsyncTask<String, Void, Void> {
         Socket s;
         PrintWriter writer;
 
@@ -183,6 +193,7 @@ public class MainActivity extends AppCompatActivity{
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             return null;
         }
 
