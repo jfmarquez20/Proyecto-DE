@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             String message = tvLocation.getText().toString();
-            DoBackgroundTask2 b1 = new DoBackgroundTask2();
+            DoBackgroundTask b1 = new DoBackgroundTask();
             b1.execute(message);
             Toast.makeText(getApplicationContext(), "Mensaje enviado con éxito!", Toast.LENGTH_LONG).show();
             mHandler.postDelayed(this, 5000);
