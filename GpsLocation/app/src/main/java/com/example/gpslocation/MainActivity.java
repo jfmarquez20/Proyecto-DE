@@ -90,17 +90,13 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View view) {
 
                 String message = tvLocation.getText().toString();
-                /*if(rbtnTcp.isChecked()){
+                if(rbtnTcp.isChecked()){
                     DoBackgroundTask b1 = new DoBackgroundTask();
                     b1.execute(message);
                 } else {
                     DoBackgroundTask2 b1 = new DoBackgroundTask2();
                     b1.execute(message);
-                }*/
-                DoBackgroundTask2 b2 = new DoBackgroundTask2();
-                b2.execute(message);
-                DoBackgroundTask b1 = new DoBackgroundTask();
-                b1.execute(message);
+                }
                 Toast.makeText(getApplicationContext(),"Mensaje enviado con éxito!",Toast.LENGTH_LONG).show();
             }
         });
@@ -120,13 +116,13 @@ public class MainActivity extends AppCompatActivity{
             int day = locaDate.getDayOfMonth();
             int sec = locaDate.getSecond();
             if(minutes <= 9 && sec <= 9){
-                tvLocation.setText("Latitud: " + location.getLatitude() + " / Longitud: " + location.getLongitude() + "\n" + "Fecha: " + day  + "/"+ month + "/" + year + " " + hours + ":0" + minutes + ":0" + sec );
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":0" + minutes + ":0" + sec );
             } else if (minutes <= 9){
-                tvLocation.setText("Latitud: " + location.getLatitude() + " / Longitud: " + location.getLongitude() + "\n" + "Fecha: " + day  + "/"+ month + "/" + year + " " + hours + ":0" + minutes + ":" + sec );
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":0" + minutes + ":" + sec );
                 } else if (sec <= 9) {
-                    tvLocation.setText("Latitud: " + location.getLatitude() + " / Longitud: " + location.getLongitude() + "\n" + "Fecha: " + day  + "/"+ month + "/" + year + " " + hours + ":" + minutes + ":0" + sec );
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":0" + sec );
                     } else {
-                        tvLocation.setText("Latitud: " + location.getLatitude() + " / Longitud: " + location.getLongitude() + "\n" + "Fecha: " + day  + "/"+ month + "/" + year + " " + hours + ":" + minutes + ":" + sec );
+                        tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + sec );
             }
         }
 
@@ -142,9 +138,9 @@ public class MainActivity extends AppCompatActivity{
             //Tcp
             String message = voids[0];
             try {
-                //int port = Integer.parseInt(etPort.getText().toString());
+                int port = Integer.parseInt(etPort.getText().toString());
                 String ip = etIp.getText().toString();
-                s = new Socket(ip,15002);
+                s = new Socket(ip,port);
                 writer = new PrintWriter(s.getOutputStream());
                 writer.write(message);
                 writer.flush();
@@ -169,7 +165,7 @@ public class MainActivity extends AppCompatActivity{
         protected Void doInBackground(String... voids) {
             //Aquí UDP
             try {
-                //int port = Integer.parseInt(etPort.getText().toString());
+                int port = Integer.parseInt(etPort.getText().toString());
                 String ip = etIp.getText().toString();
                 String messageStr = voids[0];
                 InetAddress local = InetAddress.getByName(ip);
@@ -180,7 +176,7 @@ public class MainActivity extends AppCompatActivity{
                 DatagramSocket su = new DatagramSocket();
                 //
 
-                DatagramPacket p = new DatagramPacket(messageu, msg_length, local, 50000);
+                DatagramPacket p = new DatagramPacket(messageu, msg_length, local, port);
                 su.send(p);//properly able to send data. i receive data to server
             } catch (SocketException e) {
                 e.printStackTrace();
@@ -191,45 +187,6 @@ public class MainActivity extends AppCompatActivity{
         }
 
     }
-
-    public class CallAPI extends AsyncTask<String, String, String> {
-
-        public CallAPI(){
-            //set context variables if required
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String urlString = params[0]; // URL to call
-            String data = params[1]; //data to post
-            OutputStream out = null;
-
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                out = new BufferedOutputStream(urlConnection.getOutputStream());
-
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                writer.write(data);
-                writer.flush();
-                writer.close();
-                out.close();
-
-                urlConnection.connect();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-            return null;
-        }
-    }
-
-
-
 
 }
 
