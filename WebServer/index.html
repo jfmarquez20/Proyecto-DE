@@ -25,12 +25,18 @@
         <p id="coordinates2">x</p>
         <h2>Fecha:</h2>
         <p id="coordinates3">x</p>
-        <button onClick={setCoordinates()}>Obtener coordenadas</button>
+        <button onClick={setCoordinates()}>Start update</button>
+        <button onclick={lockCoordinates()}>Pause update</button>
         <script>
             function setCoordinates(){
-                document.getElementById("coordinates1").innerHTML = localStorage.getItem("Latitude");
-                document.getElementById("coordinates2").innerHTML = localStorage.getItem("Longitude");
-                document.getElementById("coordinates3").innerHTML = localStorage.getItem("TimeStamp");
+                update = setInterval(function(){
+                    document.getElementById("coordinates1").innerHTML = localStorage.getItem("Latitude");
+                    document.getElementById("coordinates2").innerHTML = localStorage.getItem("Longitude");
+                    document.getElementById("coordinates3").innerHTML = localStorage.getItem("TimeStamp");
+                }, 1000);
+            }
+            function lockCoordinates(){
+                clearInterval(update);
             }
         </script>
     </body>
