@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GPSLocation</title>
+	    <script src='/socket.io/socket.io.js'></script>
+        <script>
+            var socket = io.connect('http://localhost:8000');
+            socket.on('udp message', function(message) {
+                var arrayCoordinates = message.split(",");
+                var latitude = arrayCoordinates[0];
+                var longitude = arrayCoordinates[1];
+                var timeStamp = arrayCoordinates[2];
+                localStorage.setItem("Latitude", latitude);
+                localStorage.setItem("Longitude", longitude);
+                localStorage.setItem("TimeStamp", timeStamp);
+                console.log(message);
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Coordenadas de los camiones</h1>
+        <h2>Latitud:</h2>
+        <p id="coordinates1">x</p>
+        <h2>Longitud:</h2>
+        <p id="coordinates2">x</p>
+        <h2>Fecha:</h2>
+        <p id="coordinates3">x</p>
+        <button onClick={setCoordinates()}>Obtener coordenadas</button>
+        <script>
+            function setCoordinates(){
+                document.getElementById("coordinates1").innerHTML = localStorage.getItem("Latitude");
+                document.getElementById("coordinates2").innerHTML = localStorage.getItem("Longitude");
+                document.getElementById("coordinates3").innerHTML = localStorage.getItem("TimeStamp");
+            }
+        </script>
+    </body>
+</html>
