@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     //Instanciacion
     EditText etPort, etIp;
     Button btnEnviar;
+    Button btnDetener;
     TextView tvLocation;
     RadioButton rbtnTcp, rbtnUdp;
     private Handler mHandler = new Handler();
@@ -69,9 +70,7 @@ public class MainActivity extends AppCompatActivity {
         etPort = findViewById(R.id.editTextTextPersonName2);
         btnEnviar = findViewById(R.id.button2);
         tvLocation = findViewById(R.id.tvUbicacion);
-        rbtnTcp = findViewById(R.id.radioButton4);
-        rbtnUdp = findViewById(R.id.radioButton5);
-
+        btnDetener = findViewById(R.id.btndetener);
         //Permisos para enviar SMS y utilizar GPS
         while (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -91,16 +90,17 @@ public class MainActivity extends AppCompatActivity {
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (rbtnTcp.isChecked()) {
-                    send.run();
-                } else {
-                   mHandler.removeCallbacks(send);
-                }
-
+                send.run();
             }
 
         });
+        btnDetener.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mHandler.removeCallbacks(send);
+            }
 
+        });
     }
 
     private class MyLocationListener implements LocationListener {
@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
     private Runnable send = new Runnable(){
         @Override
         public void run() {
@@ -134,45 +135,15 @@ public class MainActivity extends AppCompatActivity {
             DoBackgroundTask2 b1 = new DoBackgroundTask2();
             b1.execute(message);
             Toast.makeText(getApplicationContext(), "Mensaje enviado con éxito!", Toast.LENGTH_LONG).show();
-            mHandler.postDelayed(this, 5000);
+            mHandler.postDelayed(this, 4000); //Se programan constantes ejecuciones del Runnable
         }
     };
 
-    class DoBackgroundTask extends AsyncTask<String, Void, Void> {
-        Socket s;
-        PrintWriter writer;
-
-        @Override
-        protected Void doInBackground(String... voids) {
-            //Tcp
-            String message = voids[0];
-            try {
-                int port = Integer.parseInt(etPort.getText().toString());
-                String ip = etIp.getText().toString();
-                s = new Socket(ip, port);
-                writer = new PrintWriter(s.getOutputStream());
-                writer.write(message);
-                writer.flush();
-                writer.close();
-                s.close();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-    }
-
-
     class DoBackgroundTask2 extends AsyncTask<String, Void, Void> {
-        Socket s;
-        PrintWriter writer;
 
         @Override
         protected Void doInBackground(String... voids) {
-            //Aquí UDP
+                         //Aquí UDP
             try {
                 int port = Integer.parseInt(etPort.getText().toString());
                 String ip = etIp.getText().toString();
@@ -186,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 //
 
                 DatagramPacket p = new DatagramPacket(messageu, msg_length, local, port);
-                su.send(p);//properly able to send data. i receive data to server
+                su.send(p);     //Envío de datos se realiza aquí
             } catch (SocketException e) {
                 e.printStackTrace();
             } catch (IOException e) {

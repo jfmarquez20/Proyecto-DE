@@ -65,28 +65,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitulo" />
 
-    <RadioGroup
-        android:layout_width="149dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="40dp"
+    <Button
+        android:id="@+id/btndetener"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Detener"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2">
-
-        <RadioButton
-            android:id="@+id/radioButton4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="EMPEZAR ENVÍO" />
-
-        <RadioButton
-            android:id="@+id/radioButton5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="DETENER ENVÍO" />
-
-    </RadioGroup>
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
