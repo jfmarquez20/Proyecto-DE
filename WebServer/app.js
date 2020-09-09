@@ -19,4 +19,7 @@ function handleRequest (req, res) {
 }
 
 socket.bind(50000);
-app.listen(15002);
+app.listen(15002, function (){
+    console.log("Servidor abierto en puerto 15002");
+}
+);
