@@ -19,6 +19,7 @@ app.get('/', (request, response) => {
     file.pipe(response);
   });
 
+
 socket.bind(50000);
 server.listen(15002, () => {
     console.log("Servidor abierto en puerto 15002");

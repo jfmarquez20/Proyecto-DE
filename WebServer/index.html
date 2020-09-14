@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/public/css/style.css" media="screen">
     <script src='/socket.io/socket.io.js'></script>
     <script>
         var socket = io.connect('http://localhost:15002');
@@ -17,18 +18,18 @@
     </script>
     <title>GPSLocation</title>
     <style>
-        #map {
-            height: 370px;
-            width: 100%;
-        }
+    #map {
+	height: 370px;
+	width: 100%;
+    }
 
-        .data{
-            margin-top: 50px;
-        }
+    .data{
+        margin-top: 50px;
+    }
 
-        .info{
-            margin-bottom: 40px;
-        }
+    .info{
+        margin-bottom: 40px;
+    }
     </style>
 </head>
 <body>
@@ -44,7 +45,7 @@
             <a class="nav-link" href="#">Acerca</a>
           </div>
         </div>
-      </nav>
+    </nav>
     <div class="container">
         <div class="row data">
             <div class="col-lg-6 info">
@@ -65,38 +66,37 @@
     </div>
     <script>
         function setCoordinates() {
+            var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
+            var map = new google.maps.Map(document.getElementById("map"), {zoom:17});
+            var marker = new google.maps.Marker({
+                    map:map,
+                    icon:image
+                    });
+
             update = setInterval(function () {
                 document.getElementById("coordinates1").innerHTML = latitude;
                 document.getElementById("coordinates2").innerHTML = longitude;
                 document.getElementById("coordinates3").innerHTML = timeStamp;
+
+                var latitudeFloat = parseFloat(latitude);
+                var longitudeFloat = parseFloat(longitude);
+                var coordinates = {lat:latitudeFloat, lng:longitudeFloat}
+
+                // Map options
+                var options = {
+                    center:coordinates
+                }
+
+                map.setOptions(options);
+                marker.setPosition(coordinates);   
             }, 1000);
         }
+
         function lockCoordinates() {
             clearInterval(update);
         }
     </script>
-    <script> 
-        function initMap(){
-            var coordinates = {lat:11.02249311, lng:-74.86977045}
-
-            // Map options
-            var options = {
-                zoom:8, center:coordinates
-            }
-
-            //Create the map
-            var map = new google.maps.Map(document.getElementById("map"), options);
-            addMarker(coordinates);
-            
-            function addMarker(coords){
-                var marker = new google.maps.Marker({
-                position:coords,
-                map:map
-                })
-            }   
-        }
-    </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGZcCEFE4czNKp89hTCZXNxu4i7XDCRCM&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGZcCEFE4czNKp89hTCZXNxu4i7XDCRCM&callback=setCoordinates">
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
