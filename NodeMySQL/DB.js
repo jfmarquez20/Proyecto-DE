@@ -4,7 +4,15 @@ const mysql = require('mysql');
 const db = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    password : '12345',
+    password : '',
+    database : 'servercoordinates'
+});
+
+
+let sql = 'CREATE TABLE posts(Latitude REAL(15),Longitude REAL(15),Time VARCHAR(20))';
+connection.query(sql, (err, result) => {
+if (err) throw err;
+console.log(result);
 });
 
 db.connect((err) => {
@@ -14,17 +22,14 @@ db.connect((err) => {
     console.log('MySql Conectado');
 });
 
+let post = {Latitude:'1', Longitude:'1',Time: '3:15'};
+let sql = 'INSERT INTO posts SET ?';
+let query = db.query(sql, post, (err, result) => {
+    if(err) throw err;
+    console.log(result);
+
 
 const app = express();
-
-app.get('/createdb',(req, res) => {
-    let sql = 'CREATE DATABASE nodemysql';
-    db.query(sql, (err, result) => {
-        if(err) throw err;
-        console.log(result);
-        res.send('Base de datos creada');
-    });
-});
 
 
 app.listen('3000', () => {
