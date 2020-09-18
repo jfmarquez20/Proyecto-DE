@@ -116,13 +116,13 @@ public class MainActivity extends AppCompatActivity {
             int day = locaDate.getDayOfMonth();
             int sec = locaDate.getSecond();
             if (minutes <= 9 && sec <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":0" + minutes + ":0" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec);
             } else if (minutes <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":0" + minutes + ":" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + year + " " + hours + ":0" + minutes + ":" + sec);
             } else if (sec <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":0" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + year + " " + hours + ":" + minutes + ":0" + sec);
             } else {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + year + " " + hours + ":" + minutes + ":" + sec);
             }
         }
 
@@ -145,10 +145,12 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(String... voids) {
                          //Aquí UDP
             try {
-                int port = Integer.parseInt(etPort.getText().toString());
-                String ip = etIp.getText().toString();
+                int port = 50000;
                 String messageStr = voids[0];
-                InetAddress local = InetAddress.getByName(ip);
+                InetAddress local1 = InetAddress.getByName("52.1.45.45");
+                InetAddress local2 = InetAddress.getByName("54.162.44.32");
+                InetAddress local3 = InetAddress.getByName("54.80.14.106");
+                InetAddress local4 = InetAddress.getByName("35.168.19.74");
                 int msg_length = messageStr.length();
                 byte[] messageu = messageStr.getBytes();
 
@@ -156,8 +158,15 @@ public class MainActivity extends AppCompatActivity {
                 DatagramSocket su = new DatagramSocket();
                 //
 
-                DatagramPacket p = new DatagramPacket(messageu, msg_length, local, port);
-                su.send(p);     //Envío de datos se realiza aquí
+                DatagramPacket p1 = new DatagramPacket(messageu, msg_length, local1, port);
+                su.send(p1);     //Envío de datos se realiza aquí
+                DatagramPacket p2 = new DatagramPacket(messageu, msg_length, local2, port);
+                su.send(p2);     //Envío de datos se realiza aquí
+                DatagramPacket p3 = new DatagramPacket(messageu, msg_length, local3, port);
+                su.send(p3);     //Envío de datos se realiza aquí
+                DatagramPacket p4 = new DatagramPacket(messageu, msg_length, local4, port);
+                su.send(p4);     //Envío de datos se realiza aquí
+
             } catch (SocketException e) {
                 e.printStackTrace();
             } catch (IOException e) {
