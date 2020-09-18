@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/public/css/style.css" media="screen">
     <script src='/socket.io/socket.io.js'></script>
     <script>
         var socket = io.connect('http://localhost:15002');
@@ -16,20 +15,20 @@
             console.log(message);
         });
     </script>
-    <title>GPSLocation™</title>
+    <title>GPSLocation</title>
     <style>
-    #map {
-	height: 370px;
-	width: 100%;
-    }
+        #map {
+        height: 370px;
+        width: 100%;
+        }
 
-    .data{
-        margin-top: 50px;
-    }
+        .data{
+            margin-top: 50px;
+        }
 
-    .info{
-        margin-bottom: 40px;
-    }
+        .info{  
+            margin-bottom: 40px;
+        }
     </style>
 </head>
 <body>
@@ -41,8 +40,8 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <a class="nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
-            <a class="nav-link" href="#">Trucks</a>
-            <a class="nav-link" href="#">About</a>
+            <a class="nav-link" href="#">Camiones</a>
+            <a class="nav-link" href="#">Acerca</a>
           </div>
         </div>
     </nav>
@@ -67,12 +66,18 @@
     <script>
         function setCoordinates() {
             var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
-            var map = new google.maps.Map(document.getElementById("map"), {zoom:17});
+            var start = {lat:11.02248136, lng:-74.86977616};
+            var map = new google.maps.Map(document.getElementById("map"), {zoom:17, center:start, mapTypeId: 'hybrid'});
+
             var marker = new google.maps.Marker({
                     map:map,
                     icon:image
                     });
+            marker.setPosition(start);
 
+            // Polyline Array
+            var destinations = [];
+            
             update = setInterval(function () {
                 document.getElementById("coordinates1").innerHTML = latitude;
                 document.getElementById("coordinates2").innerHTML = longitude;
@@ -81,17 +86,30 @@
                 var latitudeFloat = parseFloat(latitude);
                 var longitudeFloat = parseFloat(longitude);
                 var coordinates = {lat:latitudeFloat, lng:longitudeFloat}
+                
+                destinations.push(coordinates);
+                
+                var polylineOptions = {
+                    path: destinations,
+                    strokeColor: '#00FFFF',
+                    geodesic: true,
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                };
 
-                // Map options
-                var options = {
-                    center:coordinates
-                }
+                var polyline = new google.maps.Polyline(polylineOptions);
 
-                map.setOptions(options);
-                marker.setPosition(coordinates);   
+                /*Map options
+                 var options = {
+                     mapTypeControlOptions: {mapTypeIds: ['roadmap', 'hybrid']}
+                 }
+                map.setOptions(options);*/
+                
+                marker.setPosition(coordinates);
+                polyline.setMap(map);
             }, 1000);
         }
-
+        
         function lockCoordinates() {
             clearInterval(update);
         }
