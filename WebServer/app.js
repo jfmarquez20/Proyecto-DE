@@ -10,10 +10,10 @@ var io = socketio.listen(server);
 var socket = dgram.createSocket('udp4');
 
 const db = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : '',
-    database : 'servercoordinates'
+    host     : 'gpsldb.cvsabxwakxjs.us-east-1.rds.amazonaws.com',
+    user     : 'GPSLADMIN',
+    password : 'gpstiorico',
+    database : 'GPSLDB'
 });
 
 db.connect((err) => {
@@ -51,6 +51,4 @@ app.get('/', (request, response) => {
 socket.bind(50000);
 server.listen(15002, () => {
     console.log("Servidor abierto en puerto 15002");
-
-   
 });
