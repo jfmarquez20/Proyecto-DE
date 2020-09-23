@@ -8,12 +8,14 @@ var app = express();
 var server = require('http').Server(app);       
 var io = socketio.listen(server);
 var socket = dgram.createSocket('udp4');
+require('dotenv').config();
+
 
 const db = mysql.createConnection({
-    host     : 'tiorico.cxbtpe6lgqra.us-east-1.rds.amazonaws.com',
-    user     : 'admin',
-    password : 'gpstiorico',
-    database : 'Tiorico'
+    host     : process.env.DB_HOST,
+    user     : process.env.DB_USER,
+    password : process.env.DB_PASS,
+    database : process.env.DB_DB
 });
 
 db.connect((err) => {
