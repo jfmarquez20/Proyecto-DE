@@ -99,12 +99,12 @@
 
                 var polyline = new google.maps.Polyline(polylineOptions);
 
-                /*Map options
+                //Map options
                  var options = {
-                     mapTypeControlOptions: {mapTypeIds: ['roadmap', 'hybrid']}
+                    center:coordinates
                  }
-                map.setOptions(options);*/
-                
+
+                map.setOptions(options);
                 marker.setPosition(coordinates);
                 polyline.setMap(map);
             }, 1000);
