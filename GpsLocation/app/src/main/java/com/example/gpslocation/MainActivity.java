@@ -109,20 +109,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onLocationChanged(Location location) {
             LocalDateTime locaDate = LocalDateTime.now();
+            String day;
+            String month;
             int hours = locaDate.getHour();
             int minutes = locaDate.getMinute();
-            int month = locaDate.getMonthValue();
+            int month1 = locaDate.getMonthValue();
+            if (month1 <=9){
+                 month= '0' + String.valueOf(month1);
+            }else{ month= String.valueOf(month1);}
             int year = locaDate.getYear();
-            int day = locaDate.getDayOfMonth();
+            int day1 = locaDate.getDayOfMonth();
+            if (day1 <=9){
+                day= '0' + String.valueOf(day1);
+            }else{ day = String.valueOf(day1);}
             int sec = locaDate.getSecond();
             if (minutes <= 9 && sec <= 9) {
                 tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec);
             } else if (minutes <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + year + " " + hours + ":0" + minutes + ":" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":" + sec);
             } else if (sec <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + year + " " + hours + ":" + minutes + ":0" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":0" + sec);
             } else {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + year + " " + hours + ":" + minutes + ":" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + sec);
             }
         }
 
@@ -148,9 +156,9 @@ public class MainActivity extends AppCompatActivity {
                 int port = 50000;
                 String messageStr = voids[0];
                 InetAddress local1 = InetAddress.getByName("52.1.45.45");
-                InetAddress local2 = InetAddress.getByName("54.162.44.32");
-                InetAddress local3 = InetAddress.getByName("54.80.14.106");
-                InetAddress local4 = InetAddress.getByName("35.168.19.74");
+                InetAddress local2 = InetAddress.getByName("3.220.3.16");
+                InetAddress local3 = InetAddress.getByName("100.26.67.37");
+                InetAddress local4 = InetAddress.getByName("3.83.181.122");
                 int msg_length = messageStr.length();
                 byte[] messageu = messageStr.getBytes();
 

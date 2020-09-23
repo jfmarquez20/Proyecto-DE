@@ -10,10 +10,10 @@ var io = socketio.listen(server);
 var socket = dgram.createSocket('udp4');
 
 const db = mysql.createConnection({
-    host     : 'gpsldb.cvsabxwakxjs.us-east-1.rds.amazonaws.com',
-    user     : 'GPSLADMIN',
+    host     : 'tiorico.cxbtpe6lgqra.us-east-1.rds.amazonaws.com',
+    user     : 'admin',
     password : 'gpstiorico',
-    database : 'GPSLDB'
+    database : 'Tiorico'
 });
 
 db.connect((err) => {
