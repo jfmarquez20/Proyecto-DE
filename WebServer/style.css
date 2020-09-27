@@ -1,5 +1,5 @@
 #map {
-	height: 370px;
+	height: 500px;
 	width: 100%;
 }
 
@@ -9,4 +9,8 @@
 
 .info{
 	margin-bottom: 40px;
+}
+
+#lat {
+	margin-top: 30px;
 }

@@ -3,6 +3,7 @@ var dgram = require('dgram');
 var socketio = require('socket.io');
 var express = require('express');
 const mysql = require('mysql');
+var path = require('path');
 
 var app = express();
 var server = require('http').Server(app);       
@@ -10,6 +11,8 @@ var io = socketio.listen(server);
 var socket = dgram.createSocket('udp4');
 require('dotenv').config();
 
+//Render CSS
+app.use(express.static(__dirname));
 
 const db = mysql.createConnection({
     host     : process.env.DB_HOST,
@@ -44,9 +47,7 @@ socket.on('message', (content, rinfo) => {
 });
 
 app.get('/', (request, response) => {
-    response.writeHead(200, {'content-type': 'text/html'});
-    var file = fs.createReadStream('index.html');
-    file.pipe(response);
+    response.sendFile(path.join(__dirname + '/index.html'));
   });
 
 
