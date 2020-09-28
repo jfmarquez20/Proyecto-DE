@@ -4,6 +4,7 @@ var socketio = require('socket.io');
 var express = require('express');
 const mysql = require('mysql');
 var path = require('path');
+var bodyParser = require('body-parser');
 
 var app = express();
 var server = require('http').Server(app);       
@@ -14,19 +15,21 @@ require('dotenv').config();
 //Render CSS
 app.use(express.static(__dirname));
 
-const db = mysql.createConnection({
-    host     : process.env.DB_HOST,
-    user     : process.env.DB_USER,
-    password : process.env.DB_PASS,
-    database : process.env.DB_DB
-});
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-db.connect((err) => {
-    if(err){
-        throw err;
-    }
-    console.log('MySql Conectado');
-});
+const db = mysql.createConnection({
+     host     : process.env.DB_HOST,
+     user     : process.env.DB_USER,
+     password : process.env.DB_PASS,
+     database : process.env.DB_DB
+ });
+
+ db.connect((err) => {
+     if(err){
+         throw err;
+     }
+     console.log('MySql Conectado');
+ });
 
 socket.on('message', (content, rinfo) => { 
     console.log(`Server got: ${content} from ${rinfo.address}:${rinfo.port}`);
@@ -50,6 +53,17 @@ app.get('/', (request, response) => {
     response.sendFile(path.join(__dirname + '/index.html'));
   });
 
+app.get('/historico', (request, response) => {
+    response.sendFile(path.join(__dirname + '/historico.html'));
+});
+
+app.post('/form', urlencodedParser, function(request, response){
+    var sec = ":00";
+    var init = request.body.datetimeinit + sec;
+    var fin = request.body.datetimefin + sec;
+    console.log(init);
+    console.log(fin);
+});
 
 socket.bind(50000);
 server.listen(15002, () => {

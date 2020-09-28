@@ -27,7 +27,7 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
-            <a class="nav-link" href="#">Histórico</a>
+            <a class="nav-link" href="/historico">Histórico</a>
             <a class="nav-link" href="#">Acerca</a>
           </div>
         </div>
@@ -48,7 +48,7 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="exampleModal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -65,7 +65,7 @@
             </div>
           </div>
         </div>
-      </div>
+    </div>
     <script>
         function setCoordinates() {
             var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
@@ -111,7 +111,7 @@
                 marker.setPosition(coordinates);
                 polyline.setMap(map);
             }, 1000);
-        }
+      }
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGZcCEFE4czNKp89hTCZXNxu4i7XDCRCM&callback=setCoordinates">
     </script>
