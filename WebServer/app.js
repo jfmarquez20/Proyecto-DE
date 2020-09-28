@@ -58,11 +58,30 @@ app.get('/historico', (request, response) => {
 });
 
 app.post('/form', urlencodedParser, function(request, response){
-    var sec = ":00";
-    var init = request.body.datetimeinit + sec;
-    var fin = request.body.datetimefin + sec;
-    console.log(init);
-    console.log(fin);
+    var init = request.body.datetimeinit;
+    var fin = request.body.datetimefin;
+
+    let sql = `SELECT * FROM posts WHERE Time BETWEEN '${init}' and '${fin}'`;
+    let query = db.query(sql, (err, result) => {
+        if(err){ throw err;}
+        console.log(result.length);
+
+        var coord = [];
+        for (let i = 0; i < result.length; i++) {
+            var x = result[i]
+            delete x['Time'];
+            x['lat'] = x['Latitude'];
+            x['lng'] = x['Longitude'];
+            delete x['Latitude'];
+            delete x['Longitude'];
+            Object.values(x)[0] = parseFloat(Object.values(x)[0]);
+            Object.values(x)[1] = parseFloat(Object.values(x)[1]);
+            coord.push(x);
+        }
+        
+        console.log(coord);
+        io.sockets.emit('historico', coord);
+    });
 });
 
 socket.bind(50000);

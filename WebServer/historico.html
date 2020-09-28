@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="jquery/jquery.datetimepicker.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src='/socket.io/socket.io.js'></script>
     <title>GPSLocation</title>
 </head>
 <body>
@@ -38,7 +39,7 @@
                       <input type="text" class="form-control" name="datetimefin" id="datetimefin" aria-describedby="finHelp" placeholder="0000-00-00 00:00">
                       <small id="finHelp" class="form-text text-muted">Ingrese la fecha final de busqueda.</small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
                 </form>
             </div>
             <div class="col-lg-9">
@@ -48,50 +49,45 @@
     </div>
     <script>
         function setCoordinates() {
-            var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
-            var start = {lat:11.02248136, lng:-74.86977616};
-            var map = new google.maps.Map(document.getElementById("map"), {zoom:17, center:start, mapTypeId: 'hybrid'});
+            var socket = io.connect('http://localhost:15002');
+            socket.on('historico', function (message) {
+                var coordinates = message;
+                var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
+                var map = new google.maps.Map(document.getElementById("map"), {zoom:17, center:coordinates[0], mapTypeId: 'hybrid'});
 
-            var marker = new google.maps.Marker({
+                var marker = new google.maps.Marker({
                     map:map,
                     icon:image
                     });
-            marker.setPosition(start);
 
-            // Polyline Array
-            var destinations = [];
-            
-            update = setInterval(function () {
-                document.getElementById("coordinates1").innerHTML = latitude;
-                document.getElementById("coordinates2").innerHTML = longitude;
-                document.getElementById("coordinates3").innerHTML = timeStamp;
 
-                var latitudeFloat = parseFloat(latitude);
-                var longitudeFloat = parseFloat(longitude);
-                var coordinates = {lat:latitudeFloat, lng:longitudeFloat}
-                
-                destinations.push(coordinates);
+                var lineSymbol = {
+                    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+                };
                 
                 var polylineOptions = {
-                    path: destinations,
+                    path: coordinates,
                     strokeColor: '#00FFFF',
                     geodesic: true,
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2
+                    icons: [{
+                        icon: lineSymbol,
+                        offset: '0',
+                        repeat: '70px'
+                    }]
                 };
 
                 var polyline = new google.maps.Polyline(polylineOptions);
 
                 //Map options
-                 var options = {
-                    center:coordinates
-                 }
-
+                var options = {
+                    center:coordinates[coordinates.length-1]
+                }
+                
                 map.setOptions(options);
-                marker.setPosition(coordinates);
+                marker.setPosition(coordinates[coordinates.length-1]);
                 polyline.setMap(map);
-            }, 1000);
-        }
+                });  
+            }
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGZcCEFE4czNKp89hTCZXNxu4i7XDCRCM&callback=setCoordinates">
     </script>
