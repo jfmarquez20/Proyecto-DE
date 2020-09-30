@@ -50,11 +50,11 @@
     <script>
         function setCoordinates() {
             var socket = io.connect('http://localhost:15002');
+            var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
+            var map = new google.maps.Map(document.getElementById("map"), {zoom:17, center:{lat:11.02248136, lng:-74.86977616}, mapTypeId: 'hybrid'});
             socket.on('historico', function (message) {
                 var coordinates = message;
-                var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
-                var map = new google.maps.Map(document.getElementById("map"), {zoom:17, center:coordinates[0], mapTypeId: 'hybrid'});
-
+                
                 var marker = new google.maps.Marker({
                     map:map,
                     icon:image
