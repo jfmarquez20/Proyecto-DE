@@ -31,12 +31,12 @@
                 <form id="form" action="/form" method="POST">
                     <div class="form-group">
                       <label for="datetimeinit">Fecha inicio</label>
-                      <input readonly type="text" class="form-control" name="datetimeinit" id="datetimeinit" aria-describedby="initHelp" placeholder="2020-09-25 09:30" autocomplete="off">
+                      <input readonly type="text" class="form-control" name="datetimeinit" id="datetimeinit" aria-describedby="initHelp" placeholder="0000-00-00 00:00" autocomplete="off">
                       <small id="initHelp" class="form-text text-muted">Ingrese la fecha inicial de busqueda.</small>
                     </div>
                     <div class="form-group">    
                       <label for="datetimefin">Fecha fin</label>
-                      <input readonly type="text" class="form-control" name="datetimefin" id="datetimefin" aria-describedby="finHelp" placeholder="2020-09-25 09:40" autocomplete="off">
+                      <input readonly type="text" class="form-control" name="datetimefin" id="datetimefin" aria-describedby="finHelp" placeholder="0000-00-00 00:00" autocomplete="off">
                       <small id="finHelp" class="form-text text-muted">Ingrese la fecha final de busqueda.</small>
                     </div>
                     <button type="submit" onclick="return empty()" class="btn btn-primary">Buscar</button>
@@ -60,6 +60,14 @@
             var coordinates = [];
             socket.on('historico', function (message) {
                 coordinates = message;
+                if (coordinates.length == 0) {
+                    swal({
+                    title: "NO ENCONTRADO!",
+                    text: `No hay registro del camión entre las fechas indicadas.
+                    Ingrese otro rango de fechas.`,
+                    icon: "info",
+                    });                    
+                }
 
                 var lineSymbol = {
                     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
@@ -90,7 +98,7 @@
 
             }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4p7hFeP1wuuHwFJFTDyyMtNkgyU6g5Vo&callback=setCoordinates">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGZcCEFE4czNKp89hTCZXNxu4i7XDCRCM&callback=setCoordinates">
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
@@ -133,13 +141,16 @@
                     } else {
                         setCoordinates();
                     }
+
+            // document.getElementById("datetimeinit").value = ""
+            // document.getElementById("datetimefin").value = ""
         }
 
         $("#datetimeinit").datetimepicker({
             format:'Y-m-d H:i',
             onShow:function(ct){
                 this.setOptions({
-                maxDate:$('#datetimefin').val()?$('#datetimefin').val():false
+                //maxDate:$('#datetimefin').val()?$('#datetimefin').val():false
             })
             },
             allowTimes: timeRange()
