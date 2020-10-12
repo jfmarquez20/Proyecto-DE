@@ -26,3 +26,12 @@
 #form {
 	margin-top: 30px;
 }
+
+.container{
+	max-width: 1800px;
+	max-height: 2500px;
+}
+
+/* .row {
+	height: 1000px;
+} */
