@@ -7,7 +7,7 @@ var path = require('path');
 var bodyParser = require('body-parser');
 
 var app = express();
-var server = require('http').Server(app);       
+var server = require('http').Server(app);
 var io = socketio.listen(server);
 var socket = dgram.createSocket('udp4');
 require('dotenv').config();
@@ -18,20 +18,20 @@ app.use(express.static(__dirname));
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const db = mysql.createConnection({
-     host     : process.env.DB_HOST,
-     user     : process.env.DB_USER,
-     password : process.env.DB_PASS,
-     database : process.env.DB_DB
- });
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_DB
+});
 
- db.connect((err) => {
-     if(err){
-         throw err;
-     }
-     console.log('MySql Conectado');
- });
+db.connect((err) => {
+    if (err) {
+        throw err;
+    }
+    console.log('MySql Conectado');
+});
 
-socket.on('message', (content, rinfo) => { 
+socket.on('message', (content, rinfo) => {
     console.log(`Server got: ${content} from ${rinfo.address}:${rinfo.port}`);
     io.sockets.emit('udp message', content.toString());
 
@@ -40,30 +40,30 @@ socket.on('message', (content, rinfo) => {
     latitude = arrayCoordinates[0];
     longitude = arrayCoordinates[1];
     timeStamp1 = arrayCoordinates[2];
-    
-    let post = {Latitude:latitude, Longitude:longitude,Time:timeStamp1};
+
+    let post = { Latitude: latitude, Longitude: longitude, Time: timeStamp1 };
     let sql = 'INSERT INTO posts SET ?';
     let query = db.query(sql, post, (err, result) => {
-        if(err){ throw err;}
+        if (err) { throw err; }
         console.log(result);
     });
 });
 
 app.get('/', (request, response) => {
     response.sendFile(path.join(__dirname + '/index.html'));
-  });
+});
 
 app.get('/historico', (request, response) => {
     response.sendFile(path.join(__dirname + '/historico.html'));
 });
 
-app.post('/form', urlencodedParser, function(request, response){
+app.post('/form', urlencodedParser, function(request, response) {
     var init = request.body.datetimeinit;
     var fin = request.body.datetimefin;
 
     let sql = `SELECT * FROM posts WHERE Time BETWEEN '${init}' and '${fin}'`;
     let query = db.query(sql, (err, result) => {
-        if(err){ throw err;}
+        if (err) { throw err; }
         console.log(result.length);
 
         var coord = [];
@@ -78,7 +78,7 @@ app.post('/form', urlencodedParser, function(request, response){
             Object.values(x)[1] = parseFloat(Object.values(x)[1]);
             coord.push(x);
         }
-        
+
         console.log(coord);
         io.sockets.emit('historico', coord);
     });

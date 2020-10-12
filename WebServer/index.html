@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <script>
         var socket = io.connect('http://localhost:15002');
-        socket.on('udp message', function (message) {
+        socket.on('udp message', function(message) {
             var arrayCoordinates = message.split(",");
             latitude = arrayCoordinates[0];
             longitude = arrayCoordinates[1];
@@ -18,6 +19,7 @@
     </script>
     <title>GPSLocation</title>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="/">GPSLocation</a>
@@ -25,11 +27,11 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
-            <a class="nav-link" href="/historico">Histórico</a>
-            <a class="nav-link" href="#">Acerca</a>
-          </div>
+            <div class="navbar-nav">
+                <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/historico">Histórico</a>
+                <a class="nav-link" href="#">Acerca</a>
+            </div>
         </div>
     </nav>
     <div class="container">
@@ -40,7 +42,7 @@
                 <p id="coordinates1">x</p>
                 <h2>Longitud:</h2>
                 <p id="coordinates2">x</p>
-                <h2>Fecha:</h2> 
+                <h2>Fecha:</h2>
                 <p id="coordinates3">x</p>
             </div>
             <div class="col-lg-9">
@@ -50,50 +52,61 @@
     </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">GPSLocation</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">GPSLocation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
+                </div>
+                <div class="modal-body">
+                    <p>¡Bienvenido, en esta página podrás consultar la posición en tiempo real de un camión!</br>
+                        La pestaña históricos permite consultar la ubicación del camión en un intervalo de tiempo definido por ti.</br>
+                        Para más información consulte la pestaña "Acerca".</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                </div>
             </div>
-            <div class="modal-body">
-              <p>¡Bienvenido, en esta página podrás consultar la posición en tiempo real de un camión!</br>
-                La pestaña históricos permite consultar la ubicación del camión en un intervalo de tiempo definido por ti.</br>
-                Para más información consulte la pestaña "Acerca".</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-            </div>
-          </div>
         </div>
     </div>
     <script>
         function setCoordinates() {
             var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
-            var start = {lat:11.02248136, lng:-74.86977616};
-            var map = new google.maps.Map(document.getElementById("map"), {zoom:17, center:start, mapTypeId: 'hybrid'});
+            var start = {
+                lat: 11.02248136,
+                lng: -74.86977616
+            };
+            var map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 17,
+                center: start,
+                mapTypeId: 'hybrid'
+            });
 
             var marker = new google.maps.Marker({
-                    map:map,
-                    icon:image
-                    });
+                map: map,
+                icon: image
+            });
             marker.setPosition(start);
 
             // Polyline Array
             var destinations = [];
-            
-            update = setInterval(function () {
+
+            update = setInterval(function() {
                 document.getElementById("coordinates1").innerHTML = latitude;
                 document.getElementById("coordinates2").innerHTML = longitude;
                 document.getElementById("coordinates3").innerHTML = timeStamp;
 
                 var latitudeFloat = parseFloat(latitude);
                 var longitudeFloat = parseFloat(longitude);
-                var coordinates = {lat:latitudeFloat, lng:longitudeFloat}
-                
-                destinations.push(coordinates);
-                
+                var coordinates = {
+                    lat: latitudeFloat,
+                    lng: longitudeFloat
+                }
+
+                runSnapToRoad(coordinates);
+
+
                 var polylineOptions = {
                     path: destinations,
                     strokeColor: '#00FFFF',
@@ -105,25 +118,57 @@
                 var polyline = new google.maps.Polyline(polylineOptions);
 
                 //Map options
-                 var options = {
-                    center:coordinates
-                 }
+                var options = {
+                    center: coordinates
+                }
 
                 map.setOptions(options);
                 marker.setPosition(coordinates);
                 polyline.setMap(map);
             }, 1000);
-      }
+        }
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4p7hFeP1wuuHwFJFTDyyMtNkgyU6g5Vo&callback=setCoordinates">
+    </script>
+    <script>
+        function runSnapToRoad(path) {
+
+            var pathValues = [];
+            for (var q = 0; q < path.length; q++) {
+                pathVal = path[q];
+                pathValues.push(pathVal['lat'].toFixed(6) + ',' + pathVal['lng'].toFixed(6));
+            }
+            console.log(pathValues)
+            $.get('https://roads.googleapis.com/v1/snapToRoads', {
+                interpolate: true,
+                key: 'AIzaSyB4p7hFeP1wuuHwFJFTDyyMtNkgyU6g5Vo',
+                path: pathValues.join('|')
+            }, function(data) {
+                processSnapToRoadResponse(data);
+            });
+        }
+
+        function processSnapToRoadResponse(data) {
+            console.log(data)
+            snappedCoordinates = [];
+            placeIdArray = [];
+            for (var i = 0; i < data.snappedPoints.length; i++) {
+                var latlng = new google.maps.LatLng(
+                    data.snappedPoints[i].location.latitude,
+                    data.snappedPoints[i].location.longitude);
+                destinations.push(latlng);
+                placeIdArray.push(data.snappedPoints[i].placeId);
+            }
+        }
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
             $("#exampleModal").modal('show');
         });
     </script>
 </body>
+
 </html>
