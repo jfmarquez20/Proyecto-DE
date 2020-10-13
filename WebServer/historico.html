@@ -49,183 +49,22 @@
             </div>
         </div>
     </div>
-    <script>
-        function setCoordinates() {
-            var socket = io.connect('http://localhost:15002');
-            var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
-            map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 17,
-                center: {
-                    lat: 11.02248136,
-                    lng: -74.86977616
-                },
-                mapTypeId: 'hybrid'
-            });
-            var marker = new google.maps.Marker({
-                map: map,
-                icon: image
-            });
+    <script src="scripts/h_setcoord.js"></script>
 
-            var coordinates = [];
-            socket.on('historico', function(message) {
-                coordinates = message;
-                if (coordinates.length == 0) {
-                    swal({
-                        title: "NO ENCONTRADO!",
-                        text: `No hay registro del camión entre las fechas indicadas.
-                    Ingrese otro rango de fechas.`,
-                        icon: "info",
-                    });
-                }
-
-                lineSymbol = {
-                    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
-                };
-
-                if (coordinates.length > 100) {
-                    a = coordinates;
-                    b = a.splice(a.length - a.length % 100);
-                    while (a.length > 100) {
-                        runSnapToRoad(b)
-                        b = a.splice(a.length - 99);
-
-                    }
-                    runSnapToRoad(b)
-                } else {
-                    runSnapToRoad(coordinates)
-                }
-
-
-                //Map options
-                var options = {
-                    center: coordinates[coordinates.length - 1]
-                }
-
-                map.setOptions(options);
-                marker.setPosition(coordinates[coordinates.length - 1]);
-
-            });
-
-        }
-    </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk2vQCsUBm4JK4oKzAheluXLc4fWgiDTo&callback=setCoordinates">
     </script>
-    <script>
-        function runSnapToRoad(path) {
 
-            var pathValues = [];
-            for (var q = 0; q < path.length; q++) {
-                pathVal = path[q];
-                pathValues.push(pathVal['lat'].toFixed(6) + ',' + pathVal['lng'].toFixed(6));
-            }
-            console.log(pathValues)
-            $.get('https://roads.googleapis.com/v1/snapToRoads', {
-                interpolate: true,
-                key: 'AIzaSyBk2vQCsUBm4JK4oKzAheluXLc4fWgiDTo',
-                path: pathValues.join('|')
-            }, function(data) {
-                processSnapToRoadResponse(data);
-                drawSnappedPolyline()
-            });
-        }
+    <script src="scripts/h_runs2r.js"></script>
 
-        function processSnapToRoadResponse(data) {
-            console.log(data)
-            snappedCoordinates = [];
-            placeIdArray = [];
-            for (var i = 0; i < data.snappedPoints.length; i++) {
-                var latlng = new google.maps.LatLng(
-                    data.snappedPoints[i].location.latitude,
-                    data.snappedPoints[i].location.longitude);
-                snappedCoordinates.push(latlng);
-                placeIdArray.push(data.snappedPoints[i].placeId);
-            }
-        }
-
-        function drawSnappedPolyline() {
-            let polylines = []
-            var snappedPolyline = new google.maps.Polyline({
-                path: snappedCoordinates,
-                strokeColor: '#00FFFF',
-                geodesic: true,
-                opacity: 1,
-                icons: [{
-                    icon: lineSymbol,
-                    offset: '0',
-                    repeat: '70px'
-                }]
-            });
-
-            snappedPolyline.setMap(map);
-            polylines.push(snappedPolyline);
-        }
-    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script src="jquery/jquery.js"></script>
     <script src="jquery/jquery.datetimepicker.full.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script>
-        function timeRange() {
-            var x = 5; //minutes interval
-            var times = []; // time array
-            var tt = 0; // start time
 
-            for (var i = 0; tt < 24 * 60; i++) {
-                var hh = Math.floor(tt / 60); // getting hours of day in 0-24 format
-                var mm = (tt % 60); // getting minutes of the hour in 0-55 format
-                times[i] = ("0" + (hh)).slice(-2) + ':' + ("0" + mm).slice(-2); // pushing data in array in [00:00 - 12:00 AM/PM format]
-                tt = tt + x;
-            }
-            return times;
-        }
-
-        function empty() {
-            var x = document.getElementById("datetimeinit").value;
-            var y = document.getElementById("datetimefin").value;
-            if (x == "") {
-                swal({
-                    title: "ERROR!",
-                    text: "Debes ingresar la fecha inicial de busqueda",
-                    icon: "warning",
-                });
-                return false;
-            } else if (y == "") {
-                swal({
-                    title: "ERROR!",
-                    text: "Debes ingresar la fecha final de busqueda",
-                    icon: "warning",
-                });
-                return false;
-            } else {
-                setCoordinates();
-            }
-
-            // document.getElementById("datetimeinit").value = ""
-            // document.getElementById("datetimefin").value = ""
-        }
-
-        $("#datetimeinit").datetimepicker({
-            format: 'Y-m-d H:i',
-            onShow: function(ct) {
-                this.setOptions({
-                    //maxDate:$('#datetimefin').val()?$('#datetimefin').val():false
-                })
-            },
-            allowTimes: timeRange()
-        });
-
-        $("#datetimefin").datetimepicker({
-            format: 'Y-m-d H:i',
-            onShow: function(ct) {
-                this.setOptions({
-                    minDateTime: $('#datetimeinit').val() ? $('#datetimeinit').val() : false
-                })
-            },
-            allowTimes: timeRange()
-        });
-    </script>
+    <script src="scripts/datetimepicker.js"></script>
+    
 </body>
 
 </html>

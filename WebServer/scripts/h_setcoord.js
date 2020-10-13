@@ -14,7 +14,7 @@ function setCoordinates() {
         icon: image
     });
 
-    coordinates = [];
+    var coordinates = [];
     socket.on('historico', function(message) {
         coordinates = message;
         if (coordinates.length == 0) {

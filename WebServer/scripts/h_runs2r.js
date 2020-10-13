@@ -1,8 +1,10 @@
 function runSnapToRoad(path) {
 
     var pathValues = [];
-        pathVal = path;
+    for (var q = 0; q < path.length; q++) {
+        pathVal = path[q];
         pathValues.push(pathVal['lat'].toFixed(6) + ',' + pathVal['lng'].toFixed(6));
+    }
     console.log(pathValues)
     $.get('https://roads.googleapis.com/v1/snapToRoads', {
         interpolate: true,

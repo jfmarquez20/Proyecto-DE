@@ -7,16 +7,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src='/socket.io/socket.io.js'></script>
     <link rel="stylesheet" href="style.css">
-    <script>
-        var socket = io.connect('http://localhost:15002');
-        socket.on('udp message', function(message) {
-            var arrayCoordinates = message.split(",");
-            latitude = arrayCoordinates[0];
-            longitude = arrayCoordinates[1];
-            timeStamp = arrayCoordinates[2];
-            console.log(message);
-        });
-    </script>
+    
+    <script src="scripts/i_udp_connect.js"></script>
+
     <title>GPSLocation</title>
 </head>
 
@@ -70,158 +63,15 @@
             </div>
         </div>
     </div>
-    <script>
-        function setCoordinates() {
-            var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
-            var start = {
-                lat: 11.02248136,
-                lng: -74.86977616
-            };
-            var map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 17,
-                center: start,
-                mapTypeId: 'hybrid'
-            });
+    <script src="scripts/set_coord.js"></script>
 
-            var marker = new google.maps.Marker({
-                map: map,
-                icon: image
-            });
-            marker.setPosition(start);
-
-            // Polyline Array
-
-            destinations = [];
-            toSnap = []
-            update = setInterval(function() {
-                document.getElementById("coordinates1").innerHTML = latitude;
-                document.getElementById("coordinates2").innerHTML = longitude;
-                document.getElementById("coordinates3").innerHTML = timeStamp;
-
-                var latitudeFloat = parseFloat(latitude);
-                var longitudeFloat = parseFloat(longitude);
-                var coordinates = {
-                    lat: latitudeFloat,
-                    lng: longitudeFloat
-                }
-
-                toSnap.push(coordinates);
-                if (destinations.length < 4) {
-                    runSnapToPoint(coordinates);
-                    var polylineOptions = {
-                        path: destinations,
-                        strokeColor: '#00FFFF',
-                        geodesic: true,
-                        strokeOpacity: 1.0,
-                        strokeWeight: 2
-                    };
-
-                    var polyline = new google.maps.Polyline(polylineOptions);
-
-                    //Map options
-                    var options = {
-                        center: coordinates
-                    }
-
-                    map.setOptions(options);
-                    marker.setPosition(coordinates);
-                    polyline.setMap(map);
-                } else {
-                    if (toSnap.length >= 100) {
-                        toSnap.splice(0, toSnap.length % 100);
-                    }
-                    runSnapToRoad(toSnap);
-                }
-
-
-
-            }, 1000);
-        }
-    </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4p7hFeP1wuuHwFJFTDyyMtNkgyU6g5Vo&callback=setCoordinates">
     </script>
-    <script>
-        function runSnapToPoint(path) {
 
-            var pathValues = [];
+    <script src="scripts/i_s2r.js"></script>
 
-            pathVal = path;
-            pathValues.push(pathVal['lat'].toFixed(6) + ',' + pathVal['lng'].toFixed(6));
-
-            console.log(pathValues)
-            $.get('https://roads.googleapis.com/v1/snapToRoads', {
-                interpolate: true,
-                key: 'AIzaSyB4p7hFeP1wuuHwFJFTDyyMtNkgyU6g5Vo',
-                path: pathValues.join('|')
-            }, function(data) {
-                processSnapToRoadResponse(data);
-            });
-        }
-
-        function runSnapToRoad(path) {
-
-            var pathValues = [];
-            for (var q = 0; q < path.length; q++) {
-                pathVal = path[q];
-                pathValues.push(pathVal['lat'].toFixed(6) + ',' + pathVal['lng'].toFixed(6));
-            }
-            console.log(pathValues)
-            $.get('https://roads.googleapis.com/v1/snapToRoads', {
-                interpolate: true,
-                key: 'AIzaSyB4p7hFeP1wuuHwFJFTDyyMtNkgyU6g5Vo',
-                path: pathValues.join('|')
-            }, function(data) {
-                processSnapToRoadResponse(data);
-                drawSnappedPolyline();
-            });
-        }
-
-        function processSnapToPointResponse(data) {
-            console.log(data)
-            snappedCoordinates = [];
-            placeIdArray = [];
-            for (var i = 0; i < data.snappedPoints.length; i++) {
-                var latlng = new google.maps.LatLng(
-                    data.snappedPoints[i].location.latitude,
-                    data.snappedPoints[i].location.longitude);
-                destinations.push(latlng);
-                placeIdArray.push(data.snappedPoints[i].placeId);
-            }
-
-            function processSnapToRoadResponse(data) {
-                console.log(data)
-                snappedCoordinates = [];
-                placeIdArray = [];
-                for (var i = 0; i < data.snappedPoints.length; i++) {
-                    var latlng = new google.maps.LatLng(
-                        data.snappedPoints[i].location.latitude,
-                        data.snappedPoints[i].location.longitude);
-                    snappedCoordinates.push(latlng);
-                    placeIdArray.push(data.snappedPoints[i].placeId);
-                }
-            }
-
-            function drawSnappedPolyline() {
-                let polylines = []
-                var snappedPolyline = new google.maps.Polyline({
-                    path: snappedCoordinates,
-                    strokeColor: '#00FFFF',
-                    geodesic: true,
-                    opacity: 1,
-                    icons: [{
-                        icon: lineSymbol,
-                        offset: '0',
-                        repeat: '70px'
-                    }]
-                });
-                for (i in polylines) {
-                    polylines[i].setMap(null);
-                }
-                snappedPolyline.setMap(map);
-                polylines.push(snappedPolyline);
-            }
-    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="jquery/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script>
