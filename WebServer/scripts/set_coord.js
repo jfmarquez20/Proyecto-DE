@@ -4,20 +4,20 @@ function setCoordinates() {
         lat: 11.02248136,
         lng: -74.86977616
     };
-    var map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById("map"), {
         zoom: 17,
         center: start,
         mapTypeId: 'hybrid'
     });
 
-    var marker = new google.maps.Marker({
+    marker = new google.maps.Marker({
         map: map,
         icon: image
     });
     marker.setPosition(start);
 
     // Polyline Array
-    var destinations = [];
+    destinations = [];
 
     update = setInterval(function() {
         document.getElementById("coordinates1").innerHTML = latitude;
@@ -30,20 +30,32 @@ function setCoordinates() {
             lat: latitudeFloat,
             lng: longitudeFloat
         }
+        if (destinations.length < 4) {
+            
+            destinations.push(coordinates);
 
-        runSnapToRoad(coordinates);
+            var polylineOptions = {
+                path: destinations,
+                strokeColor: '#00FFFF',
+                geodesic: true,
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            };
 
+            var polyline = new google.maps.Polyline(polylineOptions);
 
-        var polylineOptions = {
-            path: destinations,
-            strokeColor: '#00FFFF',
-            geodesic: true,
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        };
+            
+            polyline.setMap(map);
+        } else {
+            destinations.push(coordinates);
+            if (destinations.length >= 99) {
+                
+                destinations.splice(0, destinations.length % 100 + 1);
 
-        var polyline = new google.maps.Polyline(polylineOptions);
-
+            }
+            runSnapToRoad(destinations);
+            
+        }
         //Map options
         var options = {
             center: coordinates
@@ -51,6 +63,5 @@ function setCoordinates() {
 
         map.setOptions(options);
         marker.setPosition(coordinates);
-        polyline.setMap(map);
     }, 1000);
 }
