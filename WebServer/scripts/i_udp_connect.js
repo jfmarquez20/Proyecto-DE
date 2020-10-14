@@ -1,4 +1,3 @@
-var socket = io.connect('http://localhost:15002');
 socket.on('udp message', function(message) {
     var arrayCoordinates = message.split(",");
     latitude = arrayCoordinates[0];

@@ -1,5 +1,4 @@
 function setCoordinates() {
-    var socket = io.connect('http://localhost:15002');
     var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 17,
