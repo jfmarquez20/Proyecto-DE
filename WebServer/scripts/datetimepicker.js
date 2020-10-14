@@ -12,17 +12,25 @@ function timeRange() {
     return times;
 }
 
-function empty() {
+const form = document.getElementById('form')
+
+form.addEventListener('submit', (e) =>{
+    e.preventDefault();
+
+    initValue = e.target.elements.datetimeinit.value;
+    finValue = e.target.elements.datetimefin.value;
+
     var x = document.getElementById("datetimeinit").value;
     var y = document.getElementById("datetimefin").value;
-    if (x == "") {
+
+    if (initValue == "") {
         swal({
             title: "ERROR!",
             text: "Debes ingresar la fecha inicial de busqueda",
             icon: "warning",
         });
         return false;
-    } else if (y == "") {
+    } else if (finValue == "") {
         swal({
             title: "ERROR!",
             text: "Debes ingresar la fecha final de busqueda",
@@ -30,12 +38,13 @@ function empty() {
         });
         return false;
     } else {
+        var inputValues = [];
+        inputValues.push(initValue);
+        inputValues.push(finValue);
+        socket.emit('formInputs',inputValues);
         setCoordinates();
     }
-
-    // document.getElementById("datetimeinit").value = ""
-    // document.getElementById("datetimefin").value = ""
-}
+});
 
 $("#datetimeinit").datetimepicker({
     format: 'Y-m-d H:i',

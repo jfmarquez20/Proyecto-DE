@@ -31,7 +31,7 @@
         <div class="row data">
             <div class="col-lg-3 info">
                 <h1>Histórico del camión</h1>
-                <form id="form" action="/form" method="POST">
+                <form id="form">
                     <div class="form-group">
                         <label for="datetimeinit">Fecha inicio</label>
                         <input readonly type="text" class="form-control" name="datetimeinit" id="datetimeinit" aria-describedby="initHelp" placeholder="0000-00-00 00:00" autocomplete="off">
@@ -42,7 +42,7 @@
                         <input readonly type="text" class="form-control" name="datetimefin" id="datetimefin" aria-describedby="finHelp" placeholder="0000-00-00 00:00" autocomplete="off">
                         <small id="finHelp" class="form-text text-muted">Ingrese la fecha final de busqueda.</small>
                     </div>
-                    <button type="submit" onclick="return empty()" class="btn btn-primary">Buscar</button>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
                 </form>
             </div>
             <div class="col-lg-9">
@@ -65,6 +65,19 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script src="scripts/datetimepicker.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#datetimeinit").change(function(){
+                var x = document.getElementById('datetimeinit').value;
+                var y = document.getElementById('datetimefin').value;
+                if (y != ""){
+                    //pass
+                } else {
+                    document.getElementById('datetimefin').value=`${x}`;
+                }
+            });
+        });
+    </script>
 
 </body>
 
