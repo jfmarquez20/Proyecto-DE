@@ -10,7 +10,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = socketio.listen(server);
 var socket = dgram.createSocket('udp4');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.txt' });
 
 //Render CSS
 app.use(express.static(__dirname));
@@ -65,22 +65,35 @@ io.on('connection', socket => {
 
         let sql = `SELECT * FROM posts WHERE Time BETWEEN '${init}' and '${fin}'`;
         let query = db.query(sql, (err, result) => {
-        if (err) { throw err; }
-        console.log(result.length);
+            if (err) { throw err; }
+            console.log(result.length);
 
-        var coord = [];
-        for (let i = 0; i < result.length; i++) {
-            var x = result[i]
-            delete x['Time'];
-            x['lat'] = x['Latitude'];
-            x['lng'] = x['Longitude'];
-            delete x['Latitude'];
-            delete x['Longitude'];
-            Object.values(x)[0] = parseFloat(Object.values(x)[0]);
-            Object.values(x)[1] = parseFloat(Object.values(x)[1]);
-            coord.push(x);
-        }
-        socket.emit('historico',coord)
+            var coord = [];
+            for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                delete x['Time'];
+                x['lat'] = x['Latitude'];
+                x['lng'] = x['Longitude'];
+                delete x['Latitude'];
+                delete x['Longitude'];
+                Object.values(x)[0] = parseFloat(Object.values(x)[0]);
+                Object.values(x)[1] = parseFloat(Object.values(x)[1]);
+                coord.push(x);
+            }
+            socket.emit('historico', coord)
+        });
+    });
+
+    socket.on('byPlace', msg => {
+        var lat = msg.lat;
+        var lng = msg.lng;
+        lat1 = fix(lat * 10 ^ 3) / 10 ^ 3;
+        lng1 = fix(lng * 10 ^ 3) / 10 ^ 3;
+        let sql = `SELECT * FROM posts WHERE Latitude BETWEEN'${lat1-0.001}' and '${lat1}' and Longitude '${lng1-0.01}' and '${lng1}'`;
+        let query = db.query(sql, (err, result) => {
+            if (err) { throw err; }
+            console.log(result.length);
+            socket.emit('h_byplace', result)
         });
     });
 });

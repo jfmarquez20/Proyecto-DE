@@ -51,7 +51,7 @@
         </div>
     </div>
     <script src="scripts/h_setcoord.js"></script>
-
+    <script src="scripts/findByPlace.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk2vQCsUBm4JK4oKzAheluXLc4fWgiDTo&callback=setCoordinates">
     </script>
 
@@ -66,14 +66,14 @@
 
     <script src="scripts/datetimepicker.js"></script>
     <script>
-        $(document).ready(function(){
-            $("#datetimeinit").change(function(){
+        $(document).ready(function() {
+            $("#datetimeinit").change(function() {
                 var x = document.getElementById('datetimeinit').value;
                 var y = document.getElementById('datetimefin').value;
-                if (y != ""){
+                if (y != "") {
                     //pass
                 } else {
-                    document.getElementById('datetimefin').value=`${x}`;
+                    document.getElementById('datetimefin').value = `${x}`;
                 }
             });
         });

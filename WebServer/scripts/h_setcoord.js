@@ -8,10 +8,19 @@ function setCoordinates() {
         },
         mapTypeId: 'hybrid'
     });
+    map.addListener("click", (e) => {
+        var x = [];
+        x['lat'] = e.latLng.lat();
+        x['lng'] = e.latLng.lng();
+        place = x;
+        findByPlace(place)
+    })
+
     var marker = new google.maps.Marker({
         map: map,
         icon: image
     });
+
 
     var coordinates = [];
     socket.on('historico', function(message) {
