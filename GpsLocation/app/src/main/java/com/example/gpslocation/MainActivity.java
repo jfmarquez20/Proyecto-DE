@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Asignación de las variables
         etIp = findViewById(R.id.editTextTextPersonName);
-        etPort = findViewById(R.id.editTextTextPersonName2);
+
         btnEnviar = findViewById(R.id.button2);
         tvLocation = findViewById(R.id.tvUbicacion);
         btnDetener = findViewById(R.id.btndetener);
@@ -124,13 +124,13 @@ public class MainActivity extends AppCompatActivity {
             }else{ day = String.valueOf(day1);}
             int sec = locaDate.getSecond();
             if (minutes <= 9 && sec <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec + "," + etIp.getText().toString());
             } else if (minutes <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":" + sec + "," + etIp.getText().toString());
             } else if (sec <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":0" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":0" + sec + "," + etIp.getText().toString());
             } else {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + sec);
+                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + sec + "," + etIp.getText().toString());
             }
         }
 
