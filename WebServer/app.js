@@ -10,7 +10,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = socketio.listen(server);
 var socket = dgram.createSocket('udp4');
-require('dotenv').config({ path: '.env.txt' });
+require('dotenv').config();
 
 //Render CSS
 app.use(express.static(__dirname));
@@ -65,37 +65,83 @@ io.on('connection', socket => {
 
         let sql = `SELECT * FROM posts WHERE Time BETWEEN '${init}' and '${fin}'`;
         let query = db.query(sql, (err, result) => {
-            if (err) { throw err; }
-            console.log(result.length);
+        if (err) { throw err; }
+        console.log(result.length);
 
-            var coord = [];
-            for (let i = 0; i < result.length; i++) {
-                var x = result[i]
-                delete x['Time'];
-                x['lat'] = x['Latitude'];
-                x['lng'] = x['Longitude'];
-                delete x['Latitude'];
-                delete x['Longitude'];
-                Object.values(x)[0] = parseFloat(Object.values(x)[0]);
-                Object.values(x)[1] = parseFloat(Object.values(x)[1]);
-                coord.push(x);
-            }
-            socket.emit('historico', coord)
+        var coord = [];
+        for (let i = 0; i < result.length; i++) {
+            var x = result[i]
+            delete x['Time'];
+            x['lat'] = x['Latitude'];
+            x['lng'] = x['Longitude'];
+            delete x['Latitude'];
+            delete x['Longitude'];
+            Object.values(x)[0] = parseFloat(Object.values(x)[0]);
+            Object.values(x)[1] = parseFloat(Object.values(x)[1]);
+            coord.push(x);
+        }
+        socket.emit('historico',coord)
         });
     });
 
     socket.on('byPlace', msg => {
-        var lat = msg.lat;
-        var lng = msg.lng;
-        lat1 = fix(lat * 10 ^ 3) / 10 ^ 3;
-        lng1 = fix(lng * 10 ^ 3) / 10 ^ 3;
-        let sql = `SELECT * FROM posts WHERE Latitude BETWEEN'${lat1-0.001}' and '${lat1}' and Longitude '${lng1-0.01}' and '${lng1}'`;
+        console.log(msg)
+        Number.prototype.toFixedDown = function(digits) {
+            var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)");
+            var m = this.toString().match(re);
+            return m ? parseFloat(m[1]) : this.valueOf();
+        };
+        var lat = msg[0];
+        var lng = msg[1];
+
+        if (lat < 0 && lng < 0) {
+            lat1 = lat.toFixedDown(3);
+            lat1 = 0 - lat1;
+            latInf = lat1 + 0.001;
+
+            lng1 = lng.toFixedDown(3);
+            lng1 = 0 - lng1;
+            lngInf = lng1 + 0.001;
+
+            var sql = `SELECT * FROM posts WHERE Latitude BETWEEN '${lat1}' and '${latInf}' and Longitude BETWEEN '${lng1}' and '${lngInf}'`;
+
+        } else if (lat < 0 && lng > 0) {
+            lat1 = lat.toFixedDown(3);
+            lat1 = 0 - lat1;
+            latInf = lat1 + 0.001;
+
+            lng1 = lng.toFixedDown(3);
+            lngInf = lng1 - 0.001;
+
+            var sql = `SELECT * FROM posts WHERE Latitude BETWEEN '${lat1}' and '${latInf}' and Longitude BETWEEN '${lngInf}' and '${lng1}'`;
+
+        } else if (lat > 0 && lng < 0) {
+            lat1 = lat.toFixedDown(3);
+            latInf = lat1 - 0.001;  
+
+            lng1 = lng.toFixedDown(3);
+            lng1 = 0 - lng1;
+            lngInf = lng1 + 0.001;
+
+            var sql = `SELECT * FROM posts WHERE Latitude BETWEEN '${latInf}' and '${lat1}' and Longitude BETWEEN '${lng1}' and '${lngInf}'`;
+                    
+        } else {
+            lat1 = lat.toFixedDown(3);
+            latInf = lat1 - 0.001;
+
+            lng1 = lng.toFixedDown(3);
+            lngInf = lng1 - 0.001;
+
+            var sql = `SELECT * FROM posts WHERE Latitude BETWEEN '${latInf}' and '${lat1}' and Longitude BETWEEN '${lngInf}' and '${lng1}'`;
+        }           
+        
         let query = db.query(sql, (err, result) => {
             if (err) { throw err; }
             console.log(result.length);
             socket.emit('h_byplace', result)
         });
     });
+
 });
 
 socket.bind(50000);

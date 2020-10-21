@@ -8,19 +8,30 @@ function setCoordinates() {
         },
         mapTypeId: 'hybrid'
     });
-    map.addListener("click", (e) => {
+
+    markerOnClick = new google.maps.Marker({
+        map: map,
+    });
+
+
+    map.addListener("rightclick", (e) => {
         var x = [];
-        x['lat'] = e.latLng.lat();
-        x['lng'] = e.latLng.lng();
-        place = x;
-        findByPlace(place)
+        x.push(e.latLng.lat());
+        x.push(e.latLng.lng());
+
+        var start = {
+            lat: x[0],
+            lng: x[1]
+        };
+
+        markerOnClick.setPosition(start);
+        findByPlace(x);
     })
 
     var marker = new google.maps.Marker({
         map: map,
         icon: image
     });
-
 
     var coordinates = [];
     socket.on('historico', function(message) {
