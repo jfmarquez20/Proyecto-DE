@@ -17,12 +17,17 @@ function findByPlace(place) {
 
         for (let i = 0; i < message.length; i++) {
             var x = message[i]
-            var time = x['Time'].toString();
+            var v = x['Time'].toString();
+            var vectort = v.split("")
+            vectort[10] = " ";
+            vectort[23] = " ";
+            var time = vectort.join("");
+
             var pos = {
                 lat: x['Latitude'],
                 lng: x['Longitude']
             };
-
+            
             var image1 = "https://img.icons8.com/ultraviolet/40/000000/map-pin.png";
             var marker1 = new google.maps.Marker({
                 map: map,
