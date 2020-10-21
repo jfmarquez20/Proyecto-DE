@@ -3,5 +3,7 @@ socket.on('udp message', function(message) {
     latitude = arrayCoordinates[0];
     longitude = arrayCoordinates[1];
     timeStamp = arrayCoordinates[2];
+    truckId = parseFloat(arrayCoordinates[3]);
+    
     console.log(message);
 });

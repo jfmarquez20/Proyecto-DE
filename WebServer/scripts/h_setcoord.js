@@ -15,6 +15,14 @@ function setCoordinates() {
 
 
     map.addListener("rightclick", (e) => {
+
+        if (typeof markers !== "undefined") {
+            for (var i=0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+        }
+        
         var x = [];
         x.push(e.latLng.lat());
         x.push(e.latLng.lng());

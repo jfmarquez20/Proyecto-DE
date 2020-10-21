@@ -1,8 +1,5 @@
 function findByPlace(place) {
-    //console.log(place)
     socket.emit('byPlace', place);
-
-    info = [];
 
     socket.on('h_byplace', function(message) {
         if (message.length == 0) {
@@ -12,46 +9,39 @@ function findByPlace(place) {
                 icon: "info",
             });
         }
-
         console.log(message);
-        
-        deleteInfo();
 
-        
-        function deleteInfo() {
-            for (let i = 0; i < info.length; i++) {
-                info[i].close();
-            }
-            info = [];
+        if (typeof markers == "undefined") {
+            markers = [];
         }
-        
 
         for (let i = 0; i < message.length; i++) {
             var x = message[i]
-
+            var time = x['Time'].toString();
             var pos = {
                 lat: x['Latitude'],
                 lng: x['Longitude']
             };
 
-            var time = x['Time'].toString();
-
-            const infoWindow = new google.maps.InfoWindow({
-                content: time,
+            var image1 = "https://img.icons8.com/ultraviolet/40/000000/map-pin.png";
+            var marker1 = new google.maps.Marker({
+                map: map,
+                icon: image1,
+                animation: google.maps.Animation.DROP,
                 position: pos
             });
 
-            infoWindow.open(map);
+            markers.push(marker1);
 
-            // var marker1 = new google.maps.Marker({
-            //     map: map,
-            // });
-            info.push(infoWindow);
 
-            // markers[markers.length - 1].setPosition(pos)
-            // markers[markers.length - 1].addListener("click", () => {
-            //     infowindow.open(map, markers[markers.length - 1]);
-            // });
+            const infoWindow = new google.maps.InfoWindow({
+                content: time
+            }); 
+
+            marker1.addListener("click", () => {
+                infoWindow.open(map,markers[i]);
+            });
+            
         };
         //console.log(coord)
     });

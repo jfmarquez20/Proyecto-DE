@@ -40,9 +40,16 @@ socket.on('message', (content, rinfo) => {
     latitude = arrayCoordinates[0];
     longitude = arrayCoordinates[1];
     timeStamp1 = arrayCoordinates[2];
-
+    
+    truckId= arrayCoordinates[3].parseFloat();;
     let post = { Latitude: latitude, Longitude: longitude, Time: timeStamp1 };
-    let sql = 'INSERT INTO posts SET ?';
+    
+    if (truckId == 1){
+        let sql = 'INSERT INTO posts SET ?';
+    } else {
+        if(truckId == 2){sql = 'INSERT INTO posts1 SET ?';}
+    }
+
     let query = db.query(sql, post, (err, result) => {
         if (err) { throw err; }
         console.log(result);
@@ -95,46 +102,55 @@ io.on('connection', socket => {
         var lng = msg[1];
 
         if (lat < 0 && lng < 0) {
+            latSup = (0 - lat.toFixedDown(3)) - 0.001;
             lat1 = lat.toFixedDown(3);
             lat1 = 0 - lat1;
             latInf = lat1 + 0.001;
 
+            lngSup = (0 - lng.toFixedDown(3)) - 0.001;
             lng1 = lng.toFixedDown(3);
             lng1 = 0 - lng1;
             lngInf = lng1 + 0.001;
 
-            var sql = `SELECT * FROM posts WHERE Latitude BETWEEN '${lat1}' and '${latInf}' and Longitude BETWEEN '${lng1}' and '${lngInf}'`;
+            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latSup}' AND '${latInf}') AND (Longitude BETWEEN '${lngSup}' AND '${lngInf}')`;
 
         } else if (lat < 0 && lng > 0) {
+            latSup = (0 - lat.toFixedDown(3)) - 0.001;
             lat1 = lat.toFixedDown(3);
             lat1 = 0 - lat1;
             latInf = lat1 + 0.001;
 
+            lngSup = lng.toFixedDown(3) + 0.001;
             lng1 = lng.toFixedDown(3);
             lngInf = lng1 - 0.001;
 
-            var sql = `SELECT * FROM posts WHERE Latitude BETWEEN '${lat1}' and '${latInf}' and Longitude BETWEEN '${lngInf}' and '${lng1}'`;
+            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latSup}' AND '${latInf}') AND (Longitude BETWEEN '${lngInf}' AND '${lngSup}')`;
 
         } else if (lat > 0 && lng < 0) {
+            latSup = lat.toFixedDown(3) + 0.001;
             lat1 = lat.toFixedDown(3);
             latInf = lat1 - 0.001;  
 
+            lngSup = (0 - lng.toFixedDown(3)) - 0.001;
             lng1 = lng.toFixedDown(3);
             lng1 = 0 - lng1;
             lngInf = lng1 + 0.001;
 
-            var sql = `SELECT * FROM posts WHERE Latitude BETWEEN '${latInf}' and '${lat1}' and Longitude BETWEEN '${lng1}' and '${lngInf}'`;
+            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latInf}' AND '${latSup}') AND (Longitude BETWEEN '${lngSup}' AND '${lngInf}')`;
                     
         } else {
+            latSup = lat.toFixedDown(3) + 0.001;
             lat1 = lat.toFixedDown(3);
             latInf = lat1 - 0.001;
 
+            lngSup = lng.toFixedDown(3) - 0.001;
             lng1 = lng.toFixedDown(3);
             lngInf = lng1 - 0.001;
 
-            var sql = `SELECT * FROM posts WHERE Latitude BETWEEN '${latInf}' and '${lat1}' and Longitude BETWEEN '${lngInf}' and '${lng1}'`;
-        }           
-        
+            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latInf}' AND '${latSup}') AND (Longitude BETWEEN '${lngInf}' AND '${latSup}')`;
+        }        
+
+        console.log(sql)
         let query = db.query(sql, (err, result) => {
             if (err) { throw err; }
             console.log(result.length);
