@@ -32,6 +32,7 @@ function setCoordinates() {
         document.getElementById("coordinates3").innerHTML = timeStamp;
 
         if (truckId == 1) {
+            color = '#00FFFF';
             var latitudeFloat = parseFloat(latitude);
             var longitudeFloat = parseFloat(longitude);
             var coordinates = {
@@ -45,7 +46,7 @@ function setCoordinates() {
 
                 var polylineOptions = {
                     path: destinations,
-                    strokeColor: '#00FFFF',
+                    strokeColor: color,
                     geodesic: true,
                     strokeOpacity: 1.0,
                     strokeWeight: 2
@@ -73,6 +74,7 @@ function setCoordinates() {
             map.setOptions(options);
             marker.setPosition(coordinates);
         } else if (truckId == 2) {
+            color = '#8B0000';
             var latitudeFloat = parseFloat(latitude);
             var longitudeFloat = parseFloat(longitude);
             var coordinates = {
@@ -86,7 +88,7 @@ function setCoordinates() {
 
                 var polylineOptions2 = {
                     path: destinations2,
-                    strokeColor: '#8B0000',
+                    strokeColor: color,
                     geodesic: true,
                     strokeOpacity: 1.0,
                     strokeWeight: 2

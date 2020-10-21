@@ -40,12 +40,12 @@ socket.on('message', (content, rinfo) => {
     latitude = arrayCoordinates[0];
     longitude = arrayCoordinates[1];
     timeStamp1 = arrayCoordinates[2];
-    
-    truckId= arrayCoordinates[3].parseFloat();;
+
+    truckId= parseFloat(arrayCoordinates[3]);
     let post = { Latitude: latitude, Longitude: longitude, Time: timeStamp1 };
     
     if (truckId == 1){
-        let sql = 'INSERT INTO posts SET ?';
+        var sql = 'INSERT INTO posts SET ?';
     } else {
         if(truckId == 2){sql = 'INSERT INTO posts1 SET ?';}
     }
