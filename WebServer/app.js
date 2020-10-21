@@ -10,7 +10,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = socketio.listen(server);
 var socket = dgram.createSocket('udp4');
-require('dotenv').config({ path: '.env.txt' });
+require('dotenv').config();
 
 //Render CSS
 app.use(express.static(__dirname));
@@ -41,8 +41,15 @@ socket.on('message', (content, rinfo) => {
     longitude = arrayCoordinates[1];
     timeStamp1 = arrayCoordinates[2];
 
+    truckId= parseFloat(arrayCoordinates[3]);
     let post = { Latitude: latitude, Longitude: longitude, Time: timeStamp1 };
-    let sql = 'INSERT INTO posts SET ?';
+    
+    if (truckId == 1){
+        var sql = 'INSERT INTO posts SET ?';
+    } else {
+        if(truckId == 2){sql = 'INSERT INTO posts1 SET ?';}
+    }
+
     let query = db.query(sql, post, (err, result) => {
         if (err) { throw err; }
         console.log(result);
@@ -65,37 +72,92 @@ io.on('connection', socket => {
 
         let sql = `SELECT * FROM posts WHERE Time BETWEEN '${init}' and '${fin}'`;
         let query = db.query(sql, (err, result) => {
-            if (err) { throw err; }
-            console.log(result.length);
+        if (err) { throw err; }
+        console.log(result.length);
 
-            var coord = [];
-            for (let i = 0; i < result.length; i++) {
-                var x = result[i]
-                delete x['Time'];
-                x['lat'] = x['Latitude'];
-                x['lng'] = x['Longitude'];
-                delete x['Latitude'];
-                delete x['Longitude'];
-                Object.values(x)[0] = parseFloat(Object.values(x)[0]);
-                Object.values(x)[1] = parseFloat(Object.values(x)[1]);
-                coord.push(x);
-            }
-            socket.emit('historico', coord)
+        var coord = [];
+        for (let i = 0; i < result.length; i++) {
+            var x = result[i]
+            delete x['Time'];
+            x['lat'] = x['Latitude'];
+            x['lng'] = x['Longitude'];
+            delete x['Latitude'];
+            delete x['Longitude'];
+            Object.values(x)[0] = parseFloat(Object.values(x)[0]);
+            Object.values(x)[1] = parseFloat(Object.values(x)[1]);
+            coord.push(x);
+        }
+        socket.emit('historico',coord)
         });
     });
 
     socket.on('byPlace', msg => {
-        var lat = msg.lat;
-        var lng = msg.lng;
-        lat1 = fix(lat * 10 ^ 3) / 10 ^ 3;
-        lng1 = fix(lng * 10 ^ 3) / 10 ^ 3;
-        let sql = `SELECT * FROM posts WHERE Latitude BETWEEN'${lat1-0.001}' and '${lat1}' and Longitude '${lng1-0.01}' and '${lng1}'`;
+        console.log(msg)
+        Number.prototype.toFixedDown = function(digits) {
+            var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)");
+            var m = this.toString().match(re);
+            return m ? parseFloat(m[1]) : this.valueOf();
+        };
+        var lat = msg[0];
+        var lng = msg[1];
+
+        if (lat < 0 && lng < 0) {
+            latSup = (0 - lat.toFixedDown(3)) - 0.001;
+            lat1 = lat.toFixedDown(3);
+            lat1 = 0 - lat1;
+            latInf = lat1 + 0.001;
+
+            lngSup = (0 - lng.toFixedDown(3)) - 0.001;
+            lng1 = lng.toFixedDown(3);
+            lng1 = 0 - lng1;
+            lngInf = lng1 + 0.001;
+
+            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latSup}' AND '${latInf}') AND (Longitude BETWEEN '${lngSup}' AND '${lngInf}')`;
+
+        } else if (lat < 0 && lng > 0) {
+            latSup = (0 - lat.toFixedDown(3)) - 0.001;
+            lat1 = lat.toFixedDown(3);
+            lat1 = 0 - lat1;
+            latInf = lat1 + 0.001;
+
+            lngSup = lng.toFixedDown(3) + 0.001;
+            lng1 = lng.toFixedDown(3);
+            lngInf = lng1 - 0.001;
+
+            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latSup}' AND '${latInf}') AND (Longitude BETWEEN '${lngInf}' AND '${lngSup}')`;
+
+        } else if (lat > 0 && lng < 0) {
+            latSup = lat.toFixedDown(3) + 0.001;
+            lat1 = lat.toFixedDown(3);
+            latInf = lat1 - 0.001;  
+
+            lngSup = (0 - lng.toFixedDown(3)) - 0.001;
+            lng1 = lng.toFixedDown(3);
+            lng1 = 0 - lng1;
+            lngInf = lng1 + 0.001;
+
+            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latInf}' AND '${latSup}') AND (Longitude BETWEEN '${lngSup}' AND '${lngInf}')`;
+                    
+        } else {
+            latSup = lat.toFixedDown(3) + 0.001;
+            lat1 = lat.toFixedDown(3);
+            latInf = lat1 - 0.001;
+
+            lngSup = lng.toFixedDown(3) - 0.001;
+            lng1 = lng.toFixedDown(3);
+            lngInf = lng1 - 0.001;
+
+            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latInf}' AND '${latSup}') AND (Longitude BETWEEN '${lngInf}' AND '${latSup}')`;
+        }        
+
+        console.log(sql)
         let query = db.query(sql, (err, result) => {
             if (err) { throw err; }
             console.log(result.length);
             socket.emit('h_byplace', result)
         });
     });
+
 });
 
 socket.bind(50000);

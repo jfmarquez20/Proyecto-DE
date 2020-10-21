@@ -67,7 +67,7 @@ function drawSnappedPolyline() {
     let polylines = []
     var snappedPolyline = new google.maps.Polyline({
         path: snappedCoordinates,
-        strokeColor: '#00FFFF',
+        strokeColor: color,
         geodesic: true,
         opacity: 1,
         icons: [{
