@@ -13,7 +13,11 @@ function findByPlace(place) {
 
         if (typeof markers == "undefined") {
             markers = [];
+            times = [];
         }
+
+        infoWindow = new google.maps.InfoWindow({
+        });
 
         for (let i = 0; i < message.length; i++) {
             var x = message[i]
@@ -37,13 +41,10 @@ function findByPlace(place) {
             });
 
             markers.push(marker1);
+            times.push(time); 
 
-
-            const infoWindow = new google.maps.InfoWindow({
-                content: time
-            }); 
-
-            marker1.addListener("click", () => {
+            marker1.addListener("mouseover", () => {
+                infoWindow.setContent(times[i])
                 infoWindow.open(map,markers[i]);
             });
             

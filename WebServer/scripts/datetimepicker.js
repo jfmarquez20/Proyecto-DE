@@ -23,17 +23,17 @@ form.addEventListener('submit', (e) =>{
     var x = document.getElementById("datetimeinit").value;
     var y = document.getElementById("datetimefin").value;
 
-    if (initValue == "") {
+    if (initValue == "" && finValue == "") {
         swal({
             title: "ERROR!",
-            text: "Debes ingresar la fecha inicial de busqueda",
+            text: "Debes ingresar la fecha inicial y final de busqueda.",
             icon: "warning",
         });
         return false;
-    } else if (finValue == "") {
+    } else if (initValue == "") {
         swal({
             title: "ERROR!",
-            text: "Debes ingresar la fecha final de busqueda",
+            text: "Debes ingresar la fecha inicial de busqueda",
             icon: "warning",
         });
         return false;

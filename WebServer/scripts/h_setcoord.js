@@ -14,13 +14,14 @@ function setCoordinates() {
     });
 
 
-    map.addListener("rightclick", (e) => {
-
+    map.addListener("click", (e) => {
+        //Clean previous markers
         if (typeof markers !== "undefined") {
             for (var i=0; i < markers.length; i++) {
                 markers[i].setMap(null);
             }
             markers = [];
+            times = [];
         }
         
         var x = [];
