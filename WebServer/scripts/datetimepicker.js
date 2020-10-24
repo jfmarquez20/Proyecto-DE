@@ -1,5 +1,5 @@
 function timeRange() {
-    var x = 5; //minutes interval
+    var x = 10; //minutes interval
     var times = []; // time array
     var tt = 0; // start time
 
@@ -12,6 +12,7 @@ function timeRange() {
     return times;
 }
 
+
 const form = document.getElementById('form')
 
 form.addEventListener('submit', (e) =>{
@@ -20,8 +21,9 @@ form.addEventListener('submit', (e) =>{
     initValue = e.target.elements.datetimeinit.value;
     finValue = e.target.elements.datetimefin.value;
 
-    var x = document.getElementById("datetimeinit").value;
-    var y = document.getElementById("datetimefin").value;
+    var inputValues = [];
+    inputValues.push(initValue);
+    inputValues.push(finValue);
 
     if (initValue == "" && finValue == "") {
         swal({
@@ -38,11 +40,35 @@ form.addEventListener('submit', (e) =>{
         });
         return false;
     } else {
-        var inputValues = [];
-        inputValues.push(initValue);
-        inputValues.push(finValue);
-        socket.emit('formInputs',inputValues);
+        socket.emit('formInputs', inputValues);
         setCoordinates();
+
+        map.addListener("click", (e) => {
+            //Clean previous markers
+            if (typeof markers !== "undefined") {
+                for (var i=0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+                markers = [];
+                times = [];
+            }
+            
+            var x = [];
+            x.push(e.latLng.lat());
+            x.push(e.latLng.lng());
+            x.push(initValue);
+            x.push(finValue);
+    
+            var start = {
+                lat: x[0],
+                lng: x[1]
+            };
+            
+            console.log(x);
+            markerOnClick.setPosition(start);
+            findByPlace(x);
+        })
+
     }
 });
 

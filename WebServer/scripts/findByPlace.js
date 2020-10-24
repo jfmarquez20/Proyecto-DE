@@ -9,23 +9,25 @@ function findByPlace(place) {
                 icon: "info",
             });
         }
-        console.log(message);
 
         if (typeof markers == "undefined") {
             markers = [];
             times = [];
         }
 
-        infoWindow = new google.maps.InfoWindow({
-        });
-
+        infoWindow = new google.maps.InfoWindow();
+        
         for (let i = 0; i < message.length; i++) {
             var x = message[i]
             var v = x['Time'].toString();
-            var vectort = v.split("")
-            vectort[10] = " ";
-            vectort[23] = " ";
-            var time = vectort.join("");
+            var vectort = v.split(/T|Z/)
+            var pos2 = vectort[1].match(/.{1,2}/g)
+            var hour = parseInt(pos2[0]) - 5;
+            pos2[0] = hour < 10 ? "0" + hour.toString():hour.toString();
+            pos2.splice(-2,2)
+            var vectort2 = pos2.join("")
+            vectort[1] = vectort2;  
+            var time = vectort[0] + "\xa0\xa0" + vectort[1];
 
             var pos = {
                 lat: x['Latitude'],
@@ -49,6 +51,6 @@ function findByPlace(place) {
             });
             
         };
-        //console.log(coord)
+
     });
 }

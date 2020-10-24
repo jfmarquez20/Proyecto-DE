@@ -13,30 +13,6 @@ function setCoordinates() {
         map: map,
     });
 
-
-    map.addListener("click", (e) => {
-        //Clean previous markers
-        if (typeof markers !== "undefined") {
-            for (var i=0; i < markers.length; i++) {
-                markers[i].setMap(null);
-            }
-            markers = [];
-            times = [];
-        }
-        
-        var x = [];
-        x.push(e.latLng.lat());
-        x.push(e.latLng.lng());
-
-        var start = {
-            lat: x[0],
-            lng: x[1]
-        };
-
-        markerOnClick.setPosition(start);
-        findByPlace(x);
-    })
-
     var marker = new google.maps.Marker({
         map: map,
         icon: image
