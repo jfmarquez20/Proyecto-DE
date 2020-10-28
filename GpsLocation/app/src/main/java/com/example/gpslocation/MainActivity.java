@@ -3,6 +3,7 @@ package com.example.gpslocation;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,9 +19,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ActivityInfo;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -55,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     Button btnEnviar;
     Button btnDetener;
     TextView tvLocation;
+    TextView textX, textY, textZ;
+    SensorManager sensorManager;
+    Sensor gyroscopeSensor;
     RadioButton rbtnTcp, rbtnUdp;
     private Handler mHandler = new Handler();
 
@@ -71,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
         btnEnviar = findViewById(R.id.button2);
         tvLocation = findViewById(R.id.tvUbicacion);
         btnDetener = findViewById(R.id.btndetener);
+
         //Permisos para enviar SMS y utilizar GPS
+
         while (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
@@ -85,6 +96,11 @@ public class MainActivity extends AppCompatActivity {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new MyLocationListener();
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        textX = findViewById(R.id.textX);
+        textY = findViewById(R.id.textY);
+        textZ = findViewById(R.id.textZ);
 
         //Enviar mensaje
         btnEnviar.setOnClickListener(new View.OnClickListener() {
@@ -101,40 +117,73 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
     }
+    public void onResume() {
+        super.onResume();
+        sensorManager.registerListener(gyroListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    public void onStop() {
+        super.onStop();
+        sensorManager.unregisterListener(gyroListener);
+    }
+
+
+    public SensorEventListener gyroListener = new SensorEventListener() {
+        public void onAccuracyChanged(Sensor sensor, int acc) {
+        }
+
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            textX.setText("X : " + (int) x + " rad/s");
+            textY.setText("Y : " + (int) y + " rad/s");
+            textZ.setText("Z : " + (int) z + " rad/s");
+
+        }
+    };
+
 
     private class MyLocationListener implements LocationListener {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @SuppressLint("SetTextI18n")
         @Override
         public void onLocationChanged(Location location) {
-            LocalDateTime locaDate = LocalDateTime.now();
-            String day;
-            String month;
-            int hours = locaDate.getHour();
-            int minutes = locaDate.getMinute();
-            int month1 = locaDate.getMonthValue();
-            if (month1 <=9){
-                 month= '0' + String.valueOf(month1);
-            }else{ month= String.valueOf(month1);}
-            int year = locaDate.getYear();
-            int day1 = locaDate.getDayOfMonth();
-            if (day1 <=9){
-                day= '0' + String.valueOf(day1);
-            }else{ day = String.valueOf(day1);}
-            int sec = locaDate.getSecond();
-            if (minutes <= 9 && sec <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec + "," + etIp.getText().toString());
-            } else if (minutes <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":" + sec + "," + etIp.getText().toString());
-            } else if (sec <= 9) {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":0" + sec + "," + etIp.getText().toString());
-            } else {
-                tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + sec + "," + etIp.getText().toString());
+            if (location != null) {
+                LocalDateTime locaDate = LocalDateTime.now();
+                String day;
+                String month;
+                int hours = locaDate.getHour();
+                int minutes = locaDate.getMinute();
+                int month1 = locaDate.getMonthValue();
+                if (month1 <=9){
+                    month= '0' + String.valueOf(month1);
+                }else{ month= String.valueOf(month1);}
+                int year = locaDate.getYear();
+                int day1 = locaDate.getDayOfMonth();
+                if (day1 <=9){
+                    day= '0' + String.valueOf(day1);
+                }else{ day = String.valueOf(day1);}
+                int sec = locaDate.getSecond();
+                String rads = (textX.getText().toString()+"/"+textY.getText().toString()+"/"+textZ.getText().toString());
+                if (minutes <= 9 && sec <= 9) {
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec + "," + etIp.getText().toString()+","+rads);
+                } else if (minutes <= 9) {
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":" + sec + "," + etIp.getText().toString()+","+rads);
+                } else if (sec <= 9) {
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":0" + sec + "," + etIp.getText().toString()+","+rads);
+                } else {
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + sec + "," + etIp.getText().toString()+","+rads);
+                }
             }
         }
 
     }
+
+
 
     private Runnable send = new Runnable(){
         @Override
