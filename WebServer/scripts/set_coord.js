@@ -1,3 +1,9 @@
+var start1 = {
+    lat: 11.02248136,
+    lng: -74.86977616
+};
+var setop=1;
+
 function setCoordinates() {
     var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
     var start = {
@@ -38,10 +44,7 @@ function setCoordinates() {
             var coordinates = {
                 lat: latitudeFloat,
                 lng: longitudeFloat
-            }
-
-            if (destinations.length < 4) {
-            
+            }            
                 destinations.push(coordinates);
 
                 var polylineOptions = {
@@ -56,35 +59,27 @@ function setCoordinates() {
 
             
                 polyline.setMap(map);
-            } else {
-                destinations.push(coordinates);
-                if (destinations.length >= 99) {
-                
-                    destinations.splice(0, destinations.length % 100 + 1);
-
-                }
-                runSnapToRoad(destinations);
-            
-            }   
+  
             //Map options
             var options = {
                 center: coordinates
             }
 
-            map.setOptions(options);
+            if (setop==2){
+                map.setOptions(options);
+            }
+            
             marker.setPosition(coordinates);
         } else if (truckId == 2) {
             color = '#8B0000';
-            var latitudeFloat = parseFloat(latitude);
-            var longitudeFloat = parseFloat(longitude);
-            var coordinates = {
-                lat: latitudeFloat,
-                lng: longitudeFloat
+            var latitudeFloat2 = parseFloat(latitude);
+            var longitudeFloat2 = parseFloat(longitude);
+            var coordinates2 = {
+                lat: latitudeFloat2,
+                lng: longitudeFloat2
             }
-
-            if (destinations2.length < 4) {
             
-                destinations2.push(coordinates);
+                destinations2.push(coordinates2);
 
                 var polylineOptions2 = {
                     path: destinations2,
@@ -98,23 +93,30 @@ function setCoordinates() {
 
             
                 polyline2.setMap(map);
-            } else {
-                destinations2.push(coordinates);
-                if (destinations2.length >= 99) {
                 
-                    destinations2.splice(0, destinations2.length % 100 + 1);
-
-                }
-                runSnapToRoad(destinations2);
-            
-            }
             //Map options
-            var options = {
-                center: coordinates
+            var options2 = {
+                center: coordinates2
             }
 
-            map.setOptions(options);
-            marker2.setPosition(coordinates);
+            if (setop==3){
+                map.setOptions(options2);
+            }
+            
+
+            marker2.setPosition(coordinates2);
         }
     }, 1000);
+}
+
+function setmap1() {
+    setop=1;
+}
+
+function setmap2() {
+    setop=2;
+}
+
+function setmap3() {
+    setop=3;
 }
