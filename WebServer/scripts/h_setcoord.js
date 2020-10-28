@@ -13,28 +13,14 @@ function setCoordinates() {
         map: map,
     });
 
-
-    map.addListener("rightclick", (e) => {
-
-        if (typeof markers !== "undefined") {
-            for (var i=0; i < markers.length; i++) {
-                markers[i].setMap(null);
-            }
-            markers = [];
-        }
-        
-        var x = [];
-        x.push(e.latLng.lat());
-        x.push(e.latLng.lng());
-
-        var start = {
-            lat: x[0],
-            lng: x[1]
-        };
-
-        markerOnClick.setPosition(start);
-        findByPlace(x);
-    })
+    circle = new google.maps.Circle({
+        map: map,
+        radius: 170,          
+        fillColor: '#FF6600',
+        fillOpacity: 0.3,
+        strokeColor: "#FFF",
+        strokeWeight: 0         
+    });
 
     var marker = new google.maps.Marker({
         map: map,

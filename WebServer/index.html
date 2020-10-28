@@ -37,6 +37,21 @@
                 <p id="coordinates2">x</p>
                 <h2>Fecha:</h2>
                 <p id="coordinates3">x</p>
+                <h5 id="enfoque">Elija el punto de enfoque:</h5>
+                <!-- <input type="button" class="btn btn-success" value="Libre" onclick="setmap1()">
+                <input type="button" class="btn btn-info" value="Camión 1" onclick="setmap2()">
+                <input type="button" class="btn btn-danger" value="Camión 2" onclick="setmap3()"> -->
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-outline-success">
+                      <input type="radio" id="option1" autocomplete="off" onclick="setmap1()" checked> Libre
+                    </label>
+                    <label class="btn btn-outline-info">
+                      <input type="radio" id="option2" autocomplete="off" onclick="setmap2()"> Camión #1
+                    </label>
+                    <label class="btn btn-outline-danger">
+                      <input type="radio" id="option3" autocomplete="off" onclick="setmap3()"> Camión #2
+                    </label>
+                </div>
             </div>
             <div class="col-lg-9">
                 <div id="map"></div>
@@ -75,9 +90,9 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script>
-        $(document).ready(function() {
+        /*$(document).ready(function() {
             $("#exampleModal").modal('show');
-        });
+        });*/
     </script>
 
 </body>
