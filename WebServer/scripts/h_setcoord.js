@@ -13,6 +13,15 @@ function setCoordinates() {
         map: map,
     });
 
+    circle = new google.maps.Circle({
+        map: map,
+        radius: 170,          
+        fillColor: '#FF6600',
+        fillOpacity: 0.3,
+        strokeColor: "#FFF",
+        strokeWeight: 0         
+    });
+
     var marker = new google.maps.Marker({
         map: map,
         icon: image

@@ -66,6 +66,7 @@ form.addEventListener('submit', (e) =>{
             
             console.log(x);
             markerOnClick.setPosition(start);
+            circle.setCenter(start);
             findByPlace(x);
         })
 
