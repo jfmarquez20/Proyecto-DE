@@ -33,9 +33,7 @@ function setCoordinates() {
     destinations2 = [];
 
     update = setInterval(function() {
-        document.getElementById("coordinates1").innerHTML = latitude;
-        document.getElementById("coordinates2").innerHTML = longitude;
-        document.getElementById("coordinates3").innerHTML = timeStamp;
+        
 
         if (truckId == 1) {
             color = '#00FFFF';
@@ -66,6 +64,10 @@ function setCoordinates() {
             }
 
             if (setop==2){
+                document.getElementById("coordinates1").innerHTML = latitude;
+                document.getElementById("coordinates2").innerHTML = longitude;
+                document.getElementById("coordinates3").innerHTML = timeStamp;
+                document.getElementById("coordinates4").innerHTML = giro;
                 map.setOptions(options);
             }
 
@@ -79,7 +81,7 @@ function setCoordinates() {
                 lng: longitudeFloat2
             }
             
-                destinations2.push(coordinates);
+                destinations2.push(coordinates2);
 
                 var polylineOptions2 = {
                     path: destinations2,
@@ -100,22 +102,38 @@ function setCoordinates() {
             }
 
             if (setop==3){
+                document.getElementById("coordinates1").innerHTML = latitude;
+                document.getElementById("coordinates2").innerHTML = longitude;
+                document.getElementById("coordinates3").innerHTML = timeStamp;
+                document.getElementById("coordinates4").innerHTML = giro;
                 map.setOptions(options2);
             }
 
-            marker2.setPosition(coordinates);
+            marker2.setPosition(coordinates2);
         }
     }, 1000);
 }
 
 function setmap1() {
     setop=1;
+    document.getElementById("coordinates1").innerHTML = "---";
+    document.getElementById("coordinates2").innerHTML = "---";
+    document.getElementById("coordinates3").innerHTML = "---";
+    document.getElementById("coordinates4").innerHTML = "---";
 }
 
 function setmap2() {
     setop=2;
+    document.getElementById("coordinates1").innerHTML = "---";
+    document.getElementById("coordinates2").innerHTML = "---";
+    document.getElementById("coordinates3").innerHTML = "---";
+    document.getElementById("coordinates4").innerHTML = "---";
 }
 
 function setmap3() {
     setop=3;
+    document.getElementById("coordinates1").innerHTML = "---";
+    document.getElementById("coordinates2").innerHTML = "---";
+    document.getElementById("coordinates3").innerHTML = "---";
+    document.getElementById("coordinates4").innerHTML = "---";
 }

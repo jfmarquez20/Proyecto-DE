@@ -4,6 +4,7 @@ socket.on('udp message', function(message) {
     longitude = arrayCoordinates[1];
     timeStamp = arrayCoordinates[2];
     truckId = parseFloat(arrayCoordinates[3]);
+    giro = arrayCoordinates[4];
     
     console.log(message);
 });
