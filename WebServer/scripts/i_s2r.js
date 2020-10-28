@@ -9,7 +9,7 @@ function runSnapToPoint(path) {
     
     $.get('https://roads.googleapis.com/v1/snapToRoads', {
         interpolate: true,
-        key: 'AIzaSyBk2vQCsUBm4JK4oKzAheluXLc4fWgiDTo',
+        key: 'AIzaSyC9t2ZsrarU4KQl7fZl6Yr2vkS3dckb_KY',
         path: pathValues
     }, function(data) {
         processSnapToPointResponse(data);
@@ -26,7 +26,7 @@ function runSnapToRoad(path) {
     
     $.get('https://roads.googleapis.com/v1/snapToRoads', {
         interpolate: true,
-        key: 'AIzaSyBk2vQCsUBm4JK4oKzAheluXLc4fWgiDTo',
+        key: 'AIAIzaSyC9t2ZsrarU4KQl7fZl6Yr2vkS3dckb_KY',
         path: pathValues.join('|')
     }, function(data) {
         processSnapToRoadResponse(data);
