@@ -3,15 +3,21 @@ var start1 = {
     lng: -74.86977616
 };
 var setop=1;
+destinations = [];
+destinations2 = [];
 
 function setCoordinates() {
     var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
     var start = {
-        lat: 11.02248136,
-        lng: -74.86977616
+        lat: 10.959409,
+        lng: -74.804982
+    };
+    var startalt = {
+        lat: 53.779846,
+        lng: 125.875376
     };
     map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 17,
+        zoom: 15,
         center: start,
         mapTypeId: 'hybrid'
     });
@@ -20,17 +26,65 @@ function setCoordinates() {
         map: map,
         icon: image
     });
-    marker.setPosition(start);
+    marker.setPosition(startalt);
 
     marker2 = new google.maps.Marker({
         map: map,
         icon: image
     });
-    marker2.setPosition(start);
+    marker2.setPosition(startalt);
 
-    // Polyline Array
-    destinations = [];
-    destinations2 = [];
+    if (setop==1){
+        color1 = '#00FFFF';
+        color2 = '#8B0000';
+        var polylineOptions = {
+            path: destinations,
+            strokeColor: color1,
+            geodesic: true,
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        };
+        var polylineOptions2 = {
+            path: destinations2,
+            strokeColor: color2,
+            geodesic: true,
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        };
+
+        var polyline = new google.maps.Polyline(polylineOptions);
+        polyline.setMap(map);
+        var polyline2 = new google.maps.Polyline(polylineOptions2);
+        polyline2.setMap(map);
+    }
+
+    if (setop==2){
+        color = '#00FFFF';
+        var polylineOptions = {
+            path: destinations,
+            strokeColor: color,
+            geodesic: true,
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        };
+
+        var polyline = new google.maps.Polyline(polylineOptions);
+        polyline.setMap(map);
+    }
+
+    if (setop==3){
+        color = '#8B0000';
+        var polylineOptions2 = {
+            path: destinations2,
+            strokeColor: color,
+            geodesic: true,
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        };
+
+        var polyline2 = new google.maps.Polyline(polylineOptions2);
+        polyline2.setMap(map);
+    }
 
     update = setInterval(function() {
         
@@ -43,24 +97,30 @@ function setCoordinates() {
                 lat: latitudeFloat,
                 lng: longitudeFloat
             }
-                destinations.push(coordinates);
+                
+            destinations.push(coordinates);
 
-                var polylineOptions = {
-                    path: destinations,
-                    strokeColor: color,
-                    geodesic: true,
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2
-                };
+            var polylineOptions = {
+                path: destinations,
+                strokeColor: color,
+                geodesic: true,
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            };
 
-                var polyline = new google.maps.Polyline(polylineOptions);
+            var polyline = new google.maps.Polyline(polylineOptions);
 
-            
-                polyline.setMap(map);
-               
-            //Map options
             var options = {
                 center: coordinates
+            }
+
+            if (setop==1){
+                document.getElementById("coordinates1").innerHTML = latitude;
+                document.getElementById("coordinates2").innerHTML = longitude;
+                document.getElementById("coordinates3").innerHTML = timeStamp;
+                document.getElementById("coordinates4").innerHTML = giro;
+                polyline.setMap(map);
+                marker.setPosition(coordinates);
             }
 
             if (setop==2){
@@ -68,10 +128,13 @@ function setCoordinates() {
                 document.getElementById("coordinates2").innerHTML = longitude;
                 document.getElementById("coordinates3").innerHTML = timeStamp;
                 document.getElementById("coordinates4").innerHTML = giro;
+                polyline.setMap(map);
                 map.setOptions(options);
+                marker.setPosition(coordinates);
+                marker2.setPosition(null);
             }
 
-            marker.setPosition(coordinates);
+            
         } else if (truckId == 2) {
             color = '#8B0000';
             var latitudeFloat2 = parseFloat(latitude);
@@ -81,24 +144,29 @@ function setCoordinates() {
                 lng: longitudeFloat2
             }
             
-                destinations2.push(coordinates2);
+            destinations2.push(coordinates2);
 
-                var polylineOptions2 = {
-                    path: destinations2,
-                    strokeColor: color,
-                    geodesic: true,
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2
-                };
+            var polylineOptions2 = {
+                path: destinations2,
+                strokeColor: color,
+                geodesic: true,
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            };
 
-                var polyline2 = new google.maps.Polyline(polylineOptions2);
+            var polyline2 = new google.maps.Polyline(polylineOptions2);
 
-            
-                polyline2.setMap(map);
-            
-            //Map options
             var options2 = {
                 center: coordinates2
+            }
+
+            if (setop==1){
+                document.getElementById("coordinates1").innerHTML = latitude;
+                document.getElementById("coordinates2").innerHTML = longitude;
+                document.getElementById("coordinates3").innerHTML = timeStamp;
+                document.getElementById("coordinates4").innerHTML = giro;
+                polyline2.setMap(map);
+                marker2.setPosition(coordinates2);
             }
 
             if (setop==3){
@@ -106,16 +174,18 @@ function setCoordinates() {
                 document.getElementById("coordinates2").innerHTML = longitude;
                 document.getElementById("coordinates3").innerHTML = timeStamp;
                 document.getElementById("coordinates4").innerHTML = giro;
+                polyline2.setMap(map);
                 map.setOptions(options2);
+                marker.setPosition(null);
+                marker2.setPosition(coordinates2);
             }
-
-            marker2.setPosition(coordinates2);
         }
     }, 1000);
 }
 
 function setmap1() {
     setop=1;
+    setCoordinates();
     document.getElementById("coordinates1").innerHTML = "---";
     document.getElementById("coordinates2").innerHTML = "---";
     document.getElementById("coordinates3").innerHTML = "---";
@@ -124,6 +194,7 @@ function setmap1() {
 
 function setmap2() {
     setop=2;
+    setCoordinates();
     document.getElementById("coordinates1").innerHTML = "---";
     document.getElementById("coordinates2").innerHTML = "---";
     document.getElementById("coordinates3").innerHTML = "---";
@@ -132,6 +203,7 @@ function setmap2() {
 
 function setmap3() {
     setop=3;
+    setCoordinates();
     document.getElementById("coordinates1").innerHTML = "---";
     document.getElementById("coordinates2").innerHTML = "---";
     document.getElementById("coordinates3").innerHTML = "---";
