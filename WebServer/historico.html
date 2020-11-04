@@ -42,7 +42,19 @@
                         <input type="text" class="form-control" name="datetimefin" id="datetimefin" aria-describedby="finHelp" placeholder="0000-00-00 00:00" autocomplete="off">
                         <small id="finHelp" class="form-text text-muted">Ingrese la fecha final de busqueda.</small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <button type="submit" class="btn btn-primary" id="boton">Buscar</button>
+                    
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-outline-success">
+                          <input type="radio" id="option1" autocomplete="off" onclick="setmap1()" checked> Ambos
+                        </label>
+                        <label class="btn btn-outline-info">
+                          <input type="radio" id="option2" autocomplete="off" onclick="setmap2()"> Camión #1
+                        </label>
+                        <label class="btn btn-outline-danger">
+                          <input type="radio" id="option3" autocomplete="off" onclick="setmap3()"> Camión #2
+                        </label>
+                    </div>
                 </form>
             </div>
             <div class="col-lg-9">

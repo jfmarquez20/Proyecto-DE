@@ -1,5 +1,4 @@
-function runSnapToRoad(path) {
-
+function runSnapToRoad(path,color) {
     var pathValues = [];
     for (var q = 0; q < path.length; q++) {
         pathVal = path[q];
@@ -12,7 +11,7 @@ function runSnapToRoad(path) {
         path: pathValues.join('|')
     }, function(data) {
         processSnapToRoadResponse(data);
-        drawSnappedPolyline()
+        drawSnappedPolyline(color)
     });
 }
 
@@ -29,11 +28,11 @@ function processSnapToRoadResponse(data) {
     }
 }
 
-function drawSnappedPolyline() {
+function drawSnappedPolyline(color) {
     let polylines = []
     var snappedPolyline = new google.maps.Polyline({
         path: snappedCoordinates,
-        strokeColor: '#00FFFF',
+        strokeColor: color,
         geodesic: true,
         opacity: 1,
         icons: [{
