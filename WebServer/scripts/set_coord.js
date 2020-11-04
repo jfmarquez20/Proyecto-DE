@@ -33,9 +33,7 @@ function setCoordinates() {
     destinations2 = [];
 
     update = setInterval(function() {
-        document.getElementById("coordinates1").innerHTML = latitude;
-        document.getElementById("coordinates2").innerHTML = longitude;
-        document.getElementById("coordinates3").innerHTML = timeStamp;
+        
 
         if (truckId == 1) {
             color = '#00FFFF';
@@ -44,7 +42,7 @@ function setCoordinates() {
             var coordinates = {
                 lat: latitudeFloat,
                 lng: longitudeFloat
-            }            
+            }
                 destinations.push(coordinates);
 
                 var polylineOptions = {
@@ -59,16 +57,20 @@ function setCoordinates() {
 
             
                 polyline.setMap(map);
-  
+               
             //Map options
             var options = {
                 center: coordinates
             }
 
             if (setop==2){
+                document.getElementById("coordinates1").innerHTML = latitude;
+                document.getElementById("coordinates2").innerHTML = longitude;
+                document.getElementById("coordinates3").innerHTML = timeStamp;
+                document.getElementById("coordinates4").innerHTML = giro;
                 map.setOptions(options);
             }
-            
+
             marker.setPosition(coordinates);
         } else if (truckId == 2) {
             color = '#8B0000';
@@ -93,16 +95,19 @@ function setCoordinates() {
 
             
                 polyline2.setMap(map);
-                
+            
             //Map options
             var options2 = {
                 center: coordinates2
             }
 
             if (setop==3){
+                document.getElementById("coordinates1").innerHTML = latitude;
+                document.getElementById("coordinates2").innerHTML = longitude;
+                document.getElementById("coordinates3").innerHTML = timeStamp;
+                document.getElementById("coordinates4").innerHTML = giro;
                 map.setOptions(options2);
             }
-            
 
             marker2.setPosition(coordinates2);
         }
@@ -111,12 +116,24 @@ function setCoordinates() {
 
 function setmap1() {
     setop=1;
+    document.getElementById("coordinates1").innerHTML = "---";
+    document.getElementById("coordinates2").innerHTML = "---";
+    document.getElementById("coordinates3").innerHTML = "---";
+    document.getElementById("coordinates4").innerHTML = "---";
 }
 
 function setmap2() {
     setop=2;
+    document.getElementById("coordinates1").innerHTML = "---";
+    document.getElementById("coordinates2").innerHTML = "---";
+    document.getElementById("coordinates3").innerHTML = "---";
+    document.getElementById("coordinates4").innerHTML = "---";
 }
 
 function setmap3() {
     setop=3;
+    document.getElementById("coordinates1").innerHTML = "---";
+    document.getElementById("coordinates2").innerHTML = "---";
+    document.getElementById("coordinates3").innerHTML = "---";
+    document.getElementById("coordinates4").innerHTML = "---";
 }

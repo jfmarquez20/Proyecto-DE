@@ -1,2 +1,4 @@
 mysql -u GPSLocationAdmin -p -h gpslocationdb.cvsabxwakxjs.us-east-1.rds.amazonaws.com -P 3306 -D GPSLocationDB
 mysql -u nombre del user -p -h endpoint de la db -P 3306 -D nombre de la db
+
+act
