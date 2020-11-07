@@ -12,6 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -28,7 +32,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -41,7 +47,6 @@ import android.widget.Toast;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
@@ -53,6 +58,11 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.io.OutputStream;
+import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,12 +70,32 @@ public class MainActivity extends AppCompatActivity {
     EditText etPort, etIp;
     Button btnEnviar;
     Button btnDetener;
+    Button btnPair;
     TextView tvLocation;
-    TextView textX, textY, textZ;
+    TextView textX, textY, textZ, status, msg_box;
     SensorManager sensorManager;
     Sensor gyroscopeSensor;
     RadioButton rbtnTcp, rbtnUdp;
+    String data =" ";
+    boolean go = true;
     private Handler mHandler = new Handler();
+
+    private BluetoothAdapter BluetoothAdap = null;
+    private Set Devices;
+
+    // based on android.bluetooth.BluetoothAdapter
+    private BluetoothAdapter mAdapter;
+    private BluetoothDevice remoteDevice;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothDevice mBluetoothDevice;
+    private BluetoothSocket mBluetoothSocket;
+    private UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    int bytess;
+
+    static final int STATE_LISTENING = 1;
+    static final int STATE_CONNECTING=2;
+    static final int STATE_CONNECTED=3;
+    static final int STATE_CONNECTION_FAILED=4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
         btnEnviar = findViewById(R.id.button2);
         tvLocation = findViewById(R.id.tvUbicacion);
         btnDetener = findViewById(R.id.btndetener);
+        status=findViewById(R.id.status);
+        btnPair=findViewById(R.id.connect);
 
         //Permisos para enviar SMS y utilizar GPS
 
@@ -106,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                go = true;
                 send.run();
             }
 
@@ -113,12 +146,36 @@ public class MainActivity extends AppCompatActivity {
         btnDetener.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                go = false;
                 mHandler.removeCallbacks(send);
             }
 
         });
+        btnPair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connect.start();
+                status.setText("Conectando");
+            }
+        });
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        try{
+            if(mBluetoothAdapter == null){
+                Log.d("bluetooth:", "device does not support bluetooth");
+            }
+            if(!mBluetoothAdapter.isEnabled()){
+                Intent enableBt = new Intent(
+                        BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                enableBt.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(enableBt);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
+
     public void onResume() {
         super.onResume();
         sensorManager.registerListener(gyroListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -146,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
     private class MyLocationListener implements LocationListener {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @SuppressLint("SetTextI18n")
@@ -170,13 +226,13 @@ public class MainActivity extends AppCompatActivity {
                 int sec = locaDate.getSecond();
                 String rads = (textX.getText().toString()+"/"+textY.getText().toString()+"/"+textZ.getText().toString());
                 if (minutes <= 9 && sec <= 9) {
-                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec + "," + etIp.getText().toString()+","+rads);
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec + "," + etIp.getText().toString()+","+data);
                 } else if (minutes <= 9) {
-                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":" + sec + "," + etIp.getText().toString()+","+rads);
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":" + sec + "," + etIp.getText().toString()+","+data);
                 } else if (sec <= 9) {
-                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":0" + sec + "," + etIp.getText().toString()+","+rads);
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":0" + sec + "," + etIp.getText().toString()+","+data);
                 } else {
-                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + sec + "," + etIp.getText().toString()+","+rads);
+                    tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + sec + "," + etIp.getText().toString()+","+data);
                 }
             }
         }
@@ -197,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
     };
 
     class DoBackgroundTask2 extends AsyncTask<String, Void, Void> {
-
         @Override
         protected Void doInBackground(String... voids) {
                          //Aquí UDP
@@ -234,6 +289,71 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    final Thread getData = new Thread() {
+        @Override
+        public void run() {
+            while (go) {
+                try {
+                    InputStream socketInputStream = mBluetoothSocket.getInputStream();
+                    byte[] buffer = new byte[1024];
+
+                    bytess = socketInputStream.read(buffer);
+                    data = new String(buffer, 0, bytess);
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                try {
+                    //set time in mili
+                    Thread.sleep(2000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    final Thread connect = new Thread() {
+        @Override
+        public void run() {
+            mBluetoothDevice = mBluetoothAdapter.getRemoteDevice("B8:27:EB:17:F4:98");
+            try {
+                mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+                mBluetoothSocket.connect();
+
+                Message message=Message.obtain();
+                message.what=STATE_CONNECTED;
+                handler.sendMessage(message);
+                getData.start();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Message message=Message.obtain();
+                message.what=STATE_CONNECTION_FAILED;
+                handler.sendMessage(message);
+            }
+        }
+    };
+
+    Handler handler=new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case STATE_CONNECTING:
+                    status.setText("Connecting");
+                    break;
+                case STATE_CONNECTED:
+                    status.setText("Connected");
+                    break;
+                case STATE_CONNECTION_FAILED:
+                    status.setText("Connection Failed");
+                    break;
+            }
+            return true;
+        }
+    });
 
 }
 
