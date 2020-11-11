@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.akexorcist:Android-BluetoothSPPLibrary:1.0@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/494aa1c3e2568bbbbf1c258b41033e05/jetified-Android-BluetoothSPPLibrary-1.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/494aa1c3e2568bbbbf1c258b41033e05/jetified-Android-BluetoothSPPLibrary-1.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/494aa1c3e2568bbbbf1c258b41033e05/jetified-Android-BluetoothSPPLibrary-1.0/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.akexorcist/Android-BluetoothSPPLibrary/1.0/ed2f4394aeb0cda12121f245120ba350ce103d53/Android-BluetoothSPPLibrary-1.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.akexorcist/Android-BluetoothSPPLibrary/1.0/b69860b2d5909025f412e40c7a702de0dc65adbf/Android-BluetoothSPPLibrary-1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
