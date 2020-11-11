@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.content.BroadcastReceiver;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -101,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(broadcastReceiver, filter);
         //Carga del layout al activity (front)
         setContentView(R.layout.activity_main);
 
@@ -130,9 +137,7 @@ public class MainActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        textX = findViewById(R.id.textX);
-        textY = findViewById(R.id.textY);
-        textZ = findViewById(R.id.textZ);
+
 
         //Enviar mensaje
         btnEnviar.setOnClickListener(new View.OnClickListener() {
@@ -154,8 +159,9 @@ public class MainActivity extends AppCompatActivity {
         btnPair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                connect.start();
+                Toast.makeText(getApplicationContext(), "Conectando",    Toast.LENGTH_SHORT).show();
                 status.setText("Conectando");
+                connect.run();
             }
         });
 
@@ -175,6 +181,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        BluetoothDevice device;
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                Toast.makeText(getApplicationContext(), "Conectado",    Toast.LENGTH_SHORT).show();
+                status.setText("Conectado");
+            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                Toast.makeText(getApplicationContext(), "Desconectado",       Toast.LENGTH_SHORT).show();
+                status.setText("Desconectado");
+            }
+        }
+    };
 
     public void onResume() {
         super.onResume();
@@ -224,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                     day= '0' + String.valueOf(day1);
                 }else{ day = String.valueOf(day1);}
                 int sec = locaDate.getSecond();
-                String rads = (textX.getText().toString()+"/"+textY.getText().toString()+"/"+textZ.getText().toString());
+
                 if (minutes <= 9 && sec <= 9) {
                     tvLocation.setText(location.getLatitude() + "," + location.getLongitude() + "," + year + "-" + month + "-" + day + " " + hours + ":0" + minutes + ":0" + sec + "," + etIp.getText().toString()+","+data);
                 } else if (minutes <= 9) {
@@ -315,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    final Thread connect = new Thread() {
+    private Runnable connect = new Runnable(){
         @Override
         public void run() {
             mBluetoothDevice = mBluetoothAdapter.getRemoteDevice("B8:27:EB:17:F4:98");
@@ -342,13 +364,13 @@ public class MainActivity extends AppCompatActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what){
                 case STATE_CONNECTING:
-                    status.setText("Connecting");
+                    status.setText("Conectando");
                     break;
                 case STATE_CONNECTED:
-                    status.setText("Connected");
+                    status.setText("Conectado");
                     break;
                 case STATE_CONNECTION_FAILED:
-                    status.setText("Connection Failed");
+                    status.setText("Conexión fallida");
                     break;
             }
             return true;
