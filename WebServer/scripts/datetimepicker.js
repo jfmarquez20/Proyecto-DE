@@ -66,6 +66,7 @@ form.addEventListener('submit', (e) =>{
             
             console.log(x);
             markerOnClick.setPosition(start);
+            circle.setOptions({radius: parseFloat(slider.value)});
             circle.setCenter(start);
             findByPlace(x);
         })

@@ -115,10 +115,10 @@ function setCoordinates() {
             }
 
             if (setop==1){
-                document.getElementById("coordinates1").innerHTML = latitude;
-                document.getElementById("coordinates2").innerHTML = longitude;
-                document.getElementById("coordinates3").innerHTML = timeStamp;
-                document.getElementById("coordinates4").innerHTML = giro;
+                document.getElementById("coordinates1").innerHTML = "---";
+                document.getElementById("coordinates2").innerHTML = "---";
+                document.getElementById("coordinates3").innerHTML = "---";
+                document.getElementById("coordinates4").innerHTML = "---";
                 polyline.setMap(map);
                 marker.setPosition(coordinates);
             }
@@ -161,10 +161,10 @@ function setCoordinates() {
             }
 
             if (setop==1){
-                document.getElementById("coordinates1").innerHTML = latitude;
-                document.getElementById("coordinates2").innerHTML = longitude;
-                document.getElementById("coordinates3").innerHTML = timeStamp;
-                document.getElementById("coordinates4").innerHTML = giro;
+                document.getElementById("coordinates1").innerHTML = "---";
+                document.getElementById("coordinates2").innerHTML = "---";
+                document.getElementById("coordinates3").innerHTML = "---";
+                document.getElementById("coordinates4").innerHTML = "---";
                 polyline2.setMap(map);
                 marker2.setPosition(coordinates2);
             }

@@ -1,5 +1,10 @@
+var slider = document.getElementById("myRange");
 function findByPlace(place) {
+    place.push(slider.value);
+
+
     socket.emit('byPlace', place);
+    console.log(place)
 
     socket.on('h_byplace', function(message) {
         if (setop==1 || setop==2){ 
@@ -77,6 +82,13 @@ function findByPlace(place) {
             });
         }    
         }
+        if (flag1==1 && flag2==1){
+            swal({
+                title: "NO ENCONTRADO!",
+                text: `No hay registro del camión cerca del punto seleccionado.`,
+                icon: "info",
+            });
+        }
 
         if (typeof markers == "undefined") {
             markers = [];
@@ -117,13 +129,7 @@ function findByPlace(place) {
                 infoWindow.setContent(times[i])
                 infoWindow.open(map,markers[i]);
             });
-            if (flag1==1 && flag2==1){
-                swal({
-                    title: "NO ENCONTRADO!",
-                    text: `No hay registro del camión cerca del punto seleccionado.`,
-                    icon: "info",
-                });
-            }
+            
         };
 
     }

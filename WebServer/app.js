@@ -124,7 +124,8 @@ io.on('connection', socket => {
         var lng = msg[1];
         var init = msg[2];
         var fin = msg[3];
-
+        var rad = msg[4];
+        
         if (lat < 0 && lng < 0) {
             latSup = (0 - lat.toFixedDown(3)) - 0.001;
             lat1 = lat.toFixedDown(3);
@@ -136,7 +137,7 @@ io.on('connection', socket => {
             lng1 = 0 - lng1;
             lngInf = lng1 + 0.001;
 
-            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latSup}' AND '${latInf}') AND (Longitude BETWEEN '${lngSup}' AND '${lngInf}') AND (Time BETWEEN '${init}' and '${fin}')`;
+            var sql = `SELECT * FROM posts WHERE ( 6371*acos(cos(radians('${lat}'))*cos(radians(Latitude))*cos(radians(Longitude)-radians('${lng}'))+sin(radians('${lat}'))*sin(radians(Latitude)))) < '${rad/1000}' AND (Time BETWEEN '${init}' and '${fin}');`;
 
         } else if (lat < 0 && lng > 0) {
             latSup = (0 - lat.toFixedDown(3)) - 0.001;
@@ -148,7 +149,7 @@ io.on('connection', socket => {
             lng1 = lng.toFixedDown(3);
             lngInf = lng1 - 0.001;
 
-            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latSup}' AND '${latInf}') AND (Longitude BETWEEN '${lngInf}' AND '${lngSup}') AND (Time BETWEEN '${init}' and '${fin}')`;
+            var sql = `SELECT * FROM posts WHERE ( 6371*acos(cos(radians('${lat}'))*cos(radians(Latitude))*cos(radians(Longitude)-radians('${lng}'))+sin(radians('${lat}'))*sin(radians(Latitude)))) < '${rad/1000}' AND (Time BETWEEN '${init}' and '${fin}');`;
 
         } else if (lat > 0 && lng < 0) {
             latSup = lat.toFixedDown(3) + 0.001;
@@ -160,7 +161,7 @@ io.on('connection', socket => {
             lng1 = 0 - lng1;
             lngInf = lng1 + 0.001;
 
-            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latInf}' AND '${latSup}') AND (Longitude BETWEEN '${lngSup}' AND '${lngInf}') AND (Time BETWEEN '${init}' and '${fin}')`;
+            var sql = `SELECT * FROM posts WHERE ( 6371*acos(cos(radians('${lat}'))*cos(radians(Latitude))*cos(radians(Longitude)-radians('${lng}'))+sin(radians('${lat}'))*sin(radians(Latitude)))) < '${rad/1000}' AND (Time BETWEEN '${init}' and '${fin}');`;
 
         } else {
             latSup = lat.toFixedDown(3) + 0.001;
@@ -171,7 +172,7 @@ io.on('connection', socket => {
             lng1 = lng.toFixedDown(3);
             lngInf = lng1 - 0.001;
 
-            var sql = `SELECT * FROM posts WHERE (Latitude BETWEEN '${latInf}' AND '${latSup}') AND (Longitude BETWEEN '${lngInf}' AND '${latSup}') AND (Time BETWEEN '${init}' and '${fin}')`;
+            var sql = `SELECT * FROM posts WHERE ( 6371*acos(cos(radians('${lat}'))*cos(radians(Latitude))*cos(radians(Longitude)-radians('${lng}'))+sin(radians('${lat}'))*sin(radians(Latitude)))) < '${rad/1000}' AND (Time BETWEEN '${init}' and '${fin}');`;
         }
 
         let query = db.query(sql, (err, result) => {
@@ -191,7 +192,7 @@ io.on('connection', socket => {
             lng1 = 0 - lng1;
             lngInf = lng1 + 0.001;
 
-            var sql1 = `SELECT * FROM posts1 WHERE (Latitude BETWEEN '${latSup}' AND '${latInf}') AND (Longitude BETWEEN '${lngSup}' AND '${lngInf}') AND (Time BETWEEN '${init}' and '${fin}')`;
+            var sql1 = `SELECT * FROM posts1 WHERE ( 6371*acos(cos(radians('${lat}'))*cos(radians(Latitude))*cos(radians(Longitude)-radians('${lng}'))+sin(radians('${lat}'))*sin(radians(Latitude)))) < '${rad/1000}' AND (Time BETWEEN '${init}' and '${fin}');`;
 
         } else if (lat < 0 && lng > 0) {
             latSup = (0 - lat.toFixedDown(3)) - 0.001;
@@ -203,7 +204,7 @@ io.on('connection', socket => {
             lng1 = lng.toFixedDown(3);
             lngInf = lng1 - 0.001;
 
-            var sql1 = `SELECT * FROM posts1 WHERE (Latitude BETWEEN '${latSup}' AND '${latInf}') AND (Longitude BETWEEN '${lngInf}' AND '${lngSup}') AND (Time BETWEEN '${init}' and '${fin}')`;
+            var sql1 = `SELECT * FROM posts1 WHERE ( 6371*acos(cos(radians('${lat}'))*cos(radians(Latitude))*cos(radians(Longitude)-radians('${lng}'))+sin(radians('${lat}'))*sin(radians(Latitude)))) < '${rad/1000}' AND (Time BETWEEN '${init}' and '${fin}');`;
 
         } else if (lat > 0 && lng < 0) {
             latSup = lat.toFixedDown(3) + 0.001;
@@ -215,7 +216,7 @@ io.on('connection', socket => {
             lng1 = 0 - lng1;
             lngInf = lng1 + 0.001;
 
-            var sql1 = `SELECT * FROM posts1 WHERE (Latitude BETWEEN '${latInf}' AND '${latSup}') AND (Longitude BETWEEN '${lngSup}' AND '${lngInf}') AND (Time BETWEEN '${init}' and '${fin}')`;
+            var sql1 = `SELECT * FROM posts1 WHERE ( 6371*acos(cos(radians('${lat}'))*cos(radians(Latitude))*cos(radians(Longitude)-radians('${lng}'))+sin(radians('${lat}'))*sin(radians(Latitude)))) < '${rad/1000}' AND (Time BETWEEN '${init}' and '${fin}');`;
 
         } else {
             latSup = lat.toFixedDown(3) + 0.001;
@@ -226,7 +227,7 @@ io.on('connection', socket => {
             lng1 = lng.toFixedDown(3);
             lngInf = lng1 - 0.001;
 
-            var sql1 = `SELECT * FROM posts1 WHERE (Latitude BETWEEN '${latInf}' AND '${latSup}') AND (Longitude BETWEEN '${lngInf}' AND '${latSup}') AND (Time BETWEEN '${init}' and '${fin}')`;
+            var sql1 = `SELECT * FROM posts1 WHERE ( 6371*acos(cos(radians('${lat}'))*cos(radians(Latitude))*cos(radians(Longitude)-radians('${lng}'))+sin(radians('${lat}'))*sin(radians(Latitude)))) < '${rad/1000}' AND (Time BETWEEN '${init}' and '${fin}');`;
         }
 
         let query1 = db.query(sql1, (err, result) => {

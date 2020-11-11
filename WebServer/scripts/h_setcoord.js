@@ -1,7 +1,17 @@
+var circle
 var setop=1;
 var coordinates = [];
 var coordinates2 = [];
+var rat=1000;
+var slider = document.getElementById("myRange");
+console.log(slider.value);
+
 function setCoordinates() {
+    slider = document.getElementById("myRange");
+    setInterval(function() {
+    console.log(slider.value);
+    },1000);
+
     var image = "https://img.icons8.com/color/48/000000/interstate-truck.png";
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 17,
@@ -18,12 +28,13 @@ function setCoordinates() {
 
     circle = new google.maps.Circle({
         map: map,
-        radius: 170,
+        radius: parseFloat(slider.value),
         fillColor: '#FF6600',
         fillOpacity: 0.3,
         strokeColor: "#FFF",
         strokeWeight: 0
     });
+    
 
     var marker = new google.maps.Marker({
         map: map,
